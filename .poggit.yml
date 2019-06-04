@@ -1,0 +1,16 @@
+--- # Poggit-CI Manifest. Open the CI at https://poggit.pmmp.io/ci/artulloss/ModerationPM
+branches:
+- master
+projects:
+  ModerationPM:
+    path: ""
+    libs:
+      - src: poggit/libasynql/libasynql
+        version: ^3.2.0
+      - src: SOF3/await-generator/await-generator
+        version: ^2.2.0
+      - src: dktapps-pm-pl/pmforms/pmforms
+        version: ^1.0.0
+      - src: CortexPE/Commando/Commando
+        version: ^0.3.1
+...
