@@ -1,6 +1,6 @@
-Discord:
-  Enable: true
-  Webhook: https://discordapp.com/api/webhooks/585213440935723008/A0WuhRhNWzHZKC42ta1mR5busgYWISN2D9RA_lC5YSfYDXlJ7FmFfc--lIuhiqOCY9a3
+Discord: # Logging for commands
+  Enable: false
+  Webhook: ENTER WEBHOOK
   Title: "{type}"
   Content-Punish:
     - "Player: {player}"

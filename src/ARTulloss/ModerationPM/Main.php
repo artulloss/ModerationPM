@@ -116,7 +116,8 @@ class Main extends PluginBase{
             $this->muted->refresh();
             $this->frozen->refresh();
         });
-        $this->getScheduler()->scheduleDelayedRepeatingTask($task, 1200 * 1, 1200 * 1);
+        $minutes = $this->getConfig()->getNested('database.cache');
+        $this->getScheduler()->scheduleDelayedRepeatingTask($task, 1200 * $minutes, 1200 * $minutes);
     }
     /**
      * @return Config
