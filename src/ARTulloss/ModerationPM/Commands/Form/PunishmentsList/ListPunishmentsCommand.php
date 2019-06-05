@@ -48,8 +48,9 @@ class ListPunishmentsCommand extends ModerationCommand implements CommandConstan
                 $this->asyncGetPunishments(function (?array $punishments) use ($sender, $commandConfig): void{
                     if($punishments !== null) {
                         $format = $commandConfig->getNested('List.Format');
+                        /** @var Punishment $punishment */
                         foreach ($punishments as $punishment) {
-                            $menuText = $this->replaceStrings(implode(TextFormat::EOL, $format), $this->provider->typeToString($this->type), $punishment->getStaffName(), $punishment->getStaffName(), $punishment->getReason());
+                            $menuText = $this->replaceStrings(implode(TextFormat::EOL, $format), $this->provider->typeToString($this->type), $punishment->getPlayerName(), $punishment->getStaffName(), $punishment->getReason());
                             $entries[] = new MenuOption($menuText);
                         }
                         if($entries ?? null !== null) {
