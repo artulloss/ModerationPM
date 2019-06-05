@@ -22,6 +22,7 @@ class UnfreezeCommand extends ReversePunishmentCommand{
 
     public function onlineUnpunish(Player $player, string $message): void{
         $this->plugin->getFrozen()->reverseAction($player);
+        $player->setImmobile(false);
         $player->sendMessage($message);
     }
 }

@@ -25,5 +25,6 @@ class FreezeCommand extends FormPunishmentModerationCommandOnline{
     public function onlinePunish(Player $player, string $message): void{
         $player->sendMessage($message);
         $this->plugin->getFrozen()->action($player);
+        $player->setImmobile();
     }
 }

@@ -27,6 +27,9 @@ permissions:
       moderation.unmute:
         default: "op"
         description: "Allows to unmute players"
+      moderation.list:
+        default: "op"
+        description: "Allows to view all punishment types"
       moderation.touch_punish:
         default: "op"
         description: "Allows to use touch punish for hackers with hard to see names"

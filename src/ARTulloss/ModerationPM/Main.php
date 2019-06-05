@@ -8,6 +8,7 @@ use ARTulloss\ModerationPM\Commands\Form\Punishments\BanCommand;
 use ARTulloss\ModerationPM\Commands\Form\Punishments\BanIPCommand;
 use ARTulloss\ModerationPM\Commands\Form\Punishments\FreezeCommand;
 use ARTulloss\ModerationPM\Commands\Form\Punishments\MuteCommand;
+use ARTulloss\ModerationPM\Commands\Form\PunishmentsList\ListPunishmentsCommand;
 use ARTulloss\ModerationPM\Commands\ReversePunishments\UnbanCommand;
 use ARTulloss\ModerationPM\Commands\ReversePunishments\UnfreezeCommand;
 use ARTulloss\ModerationPM\Commands\ReversePunishments\UnBanIPCommand;
@@ -96,6 +97,10 @@ class Main extends PluginBase{
                 new UnBanIPCommand($this, 'unban-ip', "Unban a player's IP!"),
                 new UnmuteCommand($this, 'unmute', 'Unmute a player!'),
                 new UnfreezeCommand($this, 'unfreeze', 'Unfreeze a player!', ['thaw']),
+                new ListPunishmentsCommand($this, Punishment::TYPE_BAN, 'banlist', 'List banned players'),
+                new ListPunishmentsCommand($this, Punishment::TYPE_IP_BAN, 'ipbanlist', 'List IP banned players'),
+                new ListPunishmentsCommand($this, Punishment::TYPE_MUTE, 'mutelist', 'List muted players'),
+                new ListPunishmentsCommand($this, Punishment::TYPE_FREEZE, 'freezelist', 'List frozen players'),
                 new TouchPunish($this, 'touchpunish', 'Tap to punish players!', ['tpunish'])
             ];
             /**

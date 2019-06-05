@@ -9,6 +9,8 @@ declare(strict_types=1);
 
 namespace ARTulloss\ModerationPM\Database\Container;
 
+use function array_diff;
+use function array_keys;
 use ARTulloss\ModerationPM\Database\Provider;
 use ARTulloss\ModerationPM\Utilities\Utilities;
 use pocketmine\plugin\Plugin;
@@ -45,6 +47,9 @@ class Cache extends BoolContainer{
                         if($rows !== 0) {
                             $expiredMsg = $provider->typeToString($this->type, false) . ' expired!';
                             $this->plugin->getLogger()->info("$name's " . $expiredMsg);
+                            $player = $this->plugin->getServer()->getPlayerExact($name);
+                            if($player !== null)
+                                $player->setImmobile(false);
                         }
                     });
                 }

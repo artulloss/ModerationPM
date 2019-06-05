@@ -10,6 +10,9 @@ declare(strict_types=1);
 namespace ARTulloss\ModerationPM\Database\Container;
 
 abstract class DataContainer{
+
+    public const NO_KEY = -1;
+
     /**
      * @param array $data
      * @param int $key
@@ -24,8 +27,9 @@ abstract class DataContainer{
      */
     protected static function hasNecessary(array &$data, int $key, array $checkForKeys): bool{
     //    var_dump($data);
-        if(is_array($data) && $data !== [] && isset($data[$key])) {
-            $data = $data[$key];
+        if(is_array($data) && $data !== []) {
+            if(isset($data[$key]) && $key !== self::NO_KEY)
+                $data = $data[$key];
             foreach ($checkForKeys as $value) {
                 if(!isset($data[$value]))
                     return false;

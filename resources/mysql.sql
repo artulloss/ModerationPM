@@ -167,7 +167,9 @@ DELETE FROM bans WHERE player_id = (SELECT id FROM players WHERE name = :player_
 -- #     }
 -- #     { ip_bans
 -- #       :player_name string
-DELETE FROM ip_bans WHERE player_id = (SELECT id FROM players WHERE name = :player_name);
+DELETE ip_bans FROM ip_bans
+  INNER JOIN players ON ip_bans.player_id = players.id
+WHERE players.ip = (SELECT ip FROM players WHERE id = (SELECT id FROM players WHERE name = :player_name));
 -- #     }
 -- #     { mutes
 -- #       :player_name string

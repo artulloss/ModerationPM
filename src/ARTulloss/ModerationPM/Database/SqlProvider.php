@@ -9,10 +9,9 @@ declare(strict_types=1);
 
 namespace ARTulloss\ModerationPM\Database;
 
-use ARTulloss\ModerationPM\Database\Container\Punishment;
 use ARTulloss\ModerationPM\Main;
 use ARTulloss\ModerationPM\Utilities\Utilities;
-use http\Exception\InvalidArgumentException;
+use pocketmine\utils\Utils;
 use poggit\libasynql\SqlError;
 use SOFe\AwaitGenerator\Await;
 use Generator;
@@ -57,6 +56,7 @@ abstract class SqlProvider extends Provider implements Queries{
         }, $onComplete, $this->getOnError());
     }
     public function asyncGetPlayer(string $name, callable $callback): void{
+        Utils::validateCallableSignature(function (array $result): void{}, $callback);
         Await::f2c(function () use ($callback, $name): Generator{
             $select = yield $this->asyncSelect(Queries::MODERATION_GET_PLAYERS_PLAYER, [
                 'player_name' => $name
@@ -66,7 +66,7 @@ abstract class SqlProvider extends Provider implements Queries{
     }
     public function asyncPunishPlayer(string $name, int $type, string $staffName, string $reason, int $until, callable $onComplete = null): void{
         Await::f2c(function () use ($name, $type, $staffName, $reason, $until): Generator{
-            $query = $this->resolveQuery($type, Queries::MODERATION_UPSERT_BANS, Queries::MODERATION_UPSERT_IP_BANS, Queries::MODERATION_UPSERT_MUTES, Queries::MODERATION_UPSERT_FREEZES);
+            $query = $this->resolveType($type, Queries::MODERATION_UPSERT_BANS, Queries::MODERATION_UPSERT_IP_BANS, Queries::MODERATION_UPSERT_MUTES, Queries::MODERATION_UPSERT_FREEZES);
             yield $this->asyncInsert($query, [
                 'player_name' => $name,
                 'staff_name' => $staffName,
@@ -76,14 +76,16 @@ abstract class SqlProvider extends Provider implements Queries{
         }, $onComplete, $this->getOnError());
     }
     public function asyncGetPunishments(int $type, callable $callback): void{
-        $query = $this->resolveQuery($type, self::MODERATION_GET_BANS_ALL, self::MODERATION_GET_IP_BANS_ALL, self::MODERATION_GET_MUTES_ALL, self::MODERATION_GET_FREEZES_ALL);
+        Utils::validateCallableSignature(function (array $result): void{}, $callback);
+        $query = $this->resolveType($type, self::MODERATION_GET_BANS_ALL, self::MODERATION_GET_IP_BANS_ALL, self::MODERATION_GET_MUTES_ALL, self::MODERATION_GET_FREEZES_ALL);
         Await::f2c(function () use ($query, $callback): Generator{
             $select = yield $this->asyncSelect($query);
             $callback($select);
         }, null, $this->getOnError());
     }
     public function asyncCheckPunished(string $name, int $type, callable $callback): void{
-        $query = $this->resolveQuery($type, self::MODERATION_GET_BANS_PLAYER, self::MODERATION_GET_IP_BANS_PLAYER, self::MODERATION_GET_MUTES_PLAYER, self::MODERATION_GET_FREEZES_PLAYER);
+        Utils::validateCallableSignature(function (array $rows): void{}, $callback);
+        $query = $this->resolveType($type, self::MODERATION_GET_BANS_PLAYER, self::MODERATION_GET_IP_BANS_PLAYER, self::MODERATION_GET_MUTES_PLAYER, self::MODERATION_GET_FREEZES_PLAYER);
         Await::f2c(function () use ($query, $name, $callback): Generator{
             $select = yield $this->asyncSelect($query, [
                 'player_name' => $name
@@ -92,13 +94,15 @@ abstract class SqlProvider extends Provider implements Queries{
         }, null, $this->getOnError());
     }
     public function asyncRemovePunishment(string $name, int $type, callable $callback = null): void{
-        $query = $this->resolveQuery($type, self::MODERATION_DELETE_BANS, self::MODERATION_DELETE_IP_BANS, self::MODERATION_DELETE_MUTES, self::MODERATION_DELETE_FREEZES);
+        $query = $this->resolveType($type, self::MODERATION_DELETE_BANS, self::MODERATION_DELETE_IP_BANS, self::MODERATION_DELETE_MUTES, self::MODERATION_DELETE_FREEZES);
         Await::f2c(function () use ($query, $name, $callback) {
             $result = yield $this->asyncChange($query, [
                 'player_name' => $name
             ]);
-            if($callback !== null)
+            if($callback !== null) {
+                Utils::validateCallableSignature(function (int $rows): void{}, $callback);
                 $callback($result);
+            }
         }, null, $this->getOnError());
 
     }
@@ -137,28 +141,6 @@ abstract class SqlProvider extends Provider implements Queries{
     protected function asyncChange(string $query, array $args = []): Generator{
         $this->plugin->getDatabase()->executeChange($query, $args, yield, yield Await::REJECT);
         return yield Await::ONCE;
-    }
-    /**
-     * @param int $type
-     * @param string $ban
-     * @param string $ipBan
-     * @param string $mute
-     * @param string $freeze
-     * @return string
-     */
-    public function resolveQuery(int $type, string $ban, string $ipBan, string $mute, string $freeze): string{
-        switch ($type) {
-            case Punishment::TYPE_BAN:
-                return $ban;
-            case Punishment::TYPE_IP_BAN:
-                return $ipBan;
-            case Punishment::TYPE_MUTE:
-                return $mute;
-            case Punishment::TYPE_FREEZE:
-                return $freeze;
-            default:
-                throw new InvalidArgumentException('Invalid type, please use the constants provided');
-        }
     }
     /**
      * @return Closure

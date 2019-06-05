@@ -15,7 +15,7 @@ use pocketmine\plugin\Plugin;
 class BoolContainer{
     /** @var Plugin $plugin */
     protected $plugin;
-    /** @var bool $cache */
+    /** @var bool[] $cache */
     protected $cache;
     /**
      * Cache constructor.

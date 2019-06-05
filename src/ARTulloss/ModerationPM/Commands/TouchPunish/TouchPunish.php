@@ -32,30 +32,17 @@ class TouchPunish extends ModerationCommand implements CommandConstants{
         if($sender instanceof Player) {
             if($this->testPermission($sender)) {
                 if(isset($args['type'])) {
-                    switch ($args['type']) {
-                        case 'ban':
-                            $type = Punishment::TYPE_BAN;
-                            break;
-                        case 'ip_ban':
-                        case 'ipban':
-                            $type = Punishment::TYPE_IP_BAN;
-                            break;
-                        case 'mute':
-                            $type = Punishment::TYPE_MUTE;
-                            break;
-                        case 'freeze':
-                            $type = Punishment::TYPE_FREEZE;
-                            break;
-                        default:
-                            $this->sendError(self::ERR_INVALID_ARG_VALUE, ['value' => $args['type'], 'position' => 0]);
-                            return;
-                    }
+                    $type = $this->provider->stringToType($args['type']);
                 } else {
                     $this->sendUsage();
                     return;
                 }
                 $sender->sendMessage(TextFormat::GREEN . "You're in touch punish mode!");
-                $this->plugin->getTapPunishUsers()->action($sender, $type);
+
+                if($type === null)
+                    $this->sendError(self::ERR_INVALID_ARG_VALUE, ['value' => $args['type'], 'position' => 0]);
+                else
+                    $this->plugin->getTapPunishUsers()->action($sender, $type);
             }
         } else
             $sender->sendMessage(self::PLAYER_ONLY);

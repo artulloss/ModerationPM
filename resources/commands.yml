@@ -95,3 +95,9 @@ Freeze:
     - "You are frozen!"
     - "For: {reason}"
     - "Until: {until}"
+List:
+  Format:
+    - "{player} by {staff}"
+    - "For: {reason}"
+  Command: # unban player etc
+    "un{type} {player}"

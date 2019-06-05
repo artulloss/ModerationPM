@@ -117,8 +117,6 @@ class Listener implements PMListener{
         $player = $event->getPlayer();
         if($this->plugin->getFrozen()->checkState($player))
             $player->setImmobile();
-        elseif($player->isImmobile())
-            $player->setImmobile(false);
     }
     /**
      * @param EntityDamageEvent $event
@@ -156,8 +154,8 @@ class Listener implements PMListener{
      * @param $type
      * @return callable
      */
-    private function getOnDelete($name, $type): callable {
-        return function (int $rows) use ($name, $type): void {
+    private function getOnDelete($name, $type): callable{
+        return function (int $rows) use ($name, $type): void{
             if ($rows !== 0) {
                 $expiredMsg = $this->plugin->getProvider()->typeToString($type, false) . ' expired!';
                 $this->plugin->getLogger()->info("$name's " . $expiredMsg);

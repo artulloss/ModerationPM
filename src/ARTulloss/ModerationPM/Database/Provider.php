@@ -114,4 +114,46 @@ abstract class Provider{
             return $caps ? ucwords($return) : $return;
         throw new InvalidArgumentException('Invalid type, please use the constants provided');
     }
+
+    public function stringToType(string $string): ?int{
+        switch ($string) {
+            case 'ban':
+                return Punishment::TYPE_BAN;
+                break;
+            case 'ip_ban':
+            case 'ipban':
+                return Punishment::TYPE_IP_BAN;
+            case 'mute':
+                return Punishment::TYPE_MUTE;
+            case 'freeze':
+                return Punishment::TYPE_FREEZE;
+            default:
+                return null;
+        }
+    }
+    /**
+     * @param int $type
+     * @param string $ban
+     * @param string $ipBan
+     * @param string $mute
+     * @param string $freeze
+     * @param bool $throwError
+     * @return string|null
+     */
+    public function resolveType(int $type, string $ban, string $ipBan, string $mute, string $freeze, $throwError = true): ?string{
+        switch ($type) {
+            case Punishment::TYPE_BAN:
+                return $ban;
+            case Punishment::TYPE_IP_BAN:
+                return $ipBan;
+            case Punishment::TYPE_MUTE:
+                return $mute;
+            case Punishment::TYPE_FREEZE:
+                return $freeze;
+            default:
+                if($throwError)
+                    throw new InvalidArgumentException('Invalid type, please use the constants provided');
+                return null;
+        }
+    }
 }
