@@ -1,6 +1,6 @@
 name: ModerationPM
 main: ARTulloss\ModerationPM\Main
-version: 0.0.1
+version: 0.0.2
 api: 3.0.0
 author: ARTulloss
 description: Moderation System
