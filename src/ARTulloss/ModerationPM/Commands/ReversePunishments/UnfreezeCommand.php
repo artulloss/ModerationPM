@@ -21,8 +21,7 @@ class UnfreezeCommand extends ReversePunishmentCommand{
     protected const MESSAGE_FAIL = TextFormat::RED . 'Player was not frozen!';
 
     public function onlineUnpunish(Player $player, string $message): void{
-        $this->plugin->getMuted()->reverseAction($player);
-        $player->setImmobile(false);
+        $this->plugin->getFrozen()->reverseAction($player);
         $player->sendMessage($message);
     }
 }

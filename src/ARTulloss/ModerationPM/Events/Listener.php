@@ -13,11 +13,15 @@ use ARTulloss\ModerationPM\Database\Container\PlayerData;
 use ARTulloss\ModerationPM\Database\Container\Punishment;
 use ARTulloss\ModerationPM\Main;
 use ARTulloss\ModerationPM\Utilities\Utilities;
+use pocketmine\event\entity\EntityDamageByEntityEvent;
+use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\Listener as PMListener;
 use pocketmine\event\player\PlayerChatEvent;
 use pocketmine\event\player\PlayerMoveEvent;
 use pocketmine\event\server\DataPacketReceiveEvent;
 use pocketmine\network\mcpe\protocol\LoginPacket;
+use pocketmine\Player;
+use function strtr;
 
 class Listener implements PMListener{
     /** @var Main $plugin */
@@ -117,6 +121,37 @@ class Listener implements PMListener{
             $player->setImmobile();
         elseif($player->isImmobile())
             $player->setImmobile(false);
+    }
+    /**
+     * @param EntityDamageEvent $event
+     */
+    public function onTap(EntityDamageEvent $event): void{
+        if($event instanceof EntityDamageByEntityEvent) {
+            $damager = $event->getDamager();
+            $player = $event->getEntity();
+            $tapPunish = $this->plugin->getTapPunishUsers();
+            if($damager instanceof Player && $player instanceof Player && $tapPunish->checkState($damager) !== null) {
+                $event->setCancelled();
+                switch ($this->plugin->getTapPunishUsers()->checkState($damager)) {
+                    case Punishment::TYPE_BAN;
+                        $command = 'ban {player}';
+                        break;
+                    case Punishment::TYPE_IP_BAN;
+                        $command = 'ban-ip {player}';
+                        break;
+                    case Punishment::TYPE_MUTE;
+                        $command = 'mute {player}';
+                        break;
+                    case Punishment::TYPE_FREEZE;
+                        $command = 'freeze {player}';
+                        break;
+                    default:
+                        return;
+                }
+                $damager->getServer()->dispatchCommand($damager, strtr($command, ['{player}' => $player->getName()]));
+                $tapPunish->reverseAction($damager);
+            }
+        }
     }
     /**
      * @param $name

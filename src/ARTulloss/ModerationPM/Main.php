@@ -12,13 +12,14 @@ use ARTulloss\ModerationPM\Commands\ReversePunishments\UnbanCommand;
 use ARTulloss\ModerationPM\Commands\ReversePunishments\UnfreezeCommand;
 use ARTulloss\ModerationPM\Commands\ReversePunishments\UnBanIPCommand;
 use ARTulloss\ModerationPM\Commands\ReversePunishments\UnmuteCommand;
-use ARTulloss\ModerationPM\Database\Cache\Cache;
+use ARTulloss\ModerationPM\Commands\TouchPunish\TouchPunish;
+use ARTulloss\ModerationPM\Database\Container\Cache;
 use ARTulloss\ModerationPM\Database\Container\Punishment;
 use ARTulloss\ModerationPM\Database\MySqlProvider;
 use ARTulloss\ModerationPM\Database\Provider;
+use ARTulloss\ModerationPM\Database\Container\IntContainer;
 use ARTulloss\ModerationPM\Discord\DiscordLogger;
 use ARTulloss\ModerationPM\Events\Listener;
-use ARTulloss\ModerationPM\Utilities\Utilities;
 use CortexPE\Commando\BaseCommand;
 use CortexPE\Commando\PacketHooker;
 use pocketmine\plugin\PluginBase;
@@ -34,6 +35,8 @@ use function implode;
 
 class Main extends PluginBase{
 
+    public const PERMISSION_PREFIX = 'moderation';
+
     /** @var DataConnector $database */
     private $database;
     /** @var Provider $provider */
@@ -46,6 +49,8 @@ class Main extends PluginBase{
     private $muted;
     /** @var Cache $frozen */
     private $frozen;
+    /** @var IntContainer $tapPunish */
+    private $tapPunish;
     /**
      * @throws \CortexPE\Commando\exception\HookAlreadyRegistered
      */
@@ -59,6 +64,7 @@ class Main extends PluginBase{
             if($this->getCommandConfig()->getNested('Discord.Enable'))
                 $this->discordLogger = new DiscordLogger($this);
             $this->registerCache();
+            $this->tapPunish = new IntContainer($this);
         }
 	}
 	public function initConfigs(): void{
@@ -89,7 +95,8 @@ class Main extends PluginBase{
                 new UnbanCommand($this, 'unban', 'Unban a player!'),
                 new UnBanIPCommand($this, 'unban-ip', "Unban a player's IP!"),
                 new UnmuteCommand($this, 'unmute', 'Unmute a player!'),
-                new UnfreezeCommand($this, 'unfreeze', 'Unfreeze a player!', ['thaw'])
+                new UnfreezeCommand($this, 'unfreeze', 'Unfreeze a player!', ['thaw']),
+                new TouchPunish($this, 'touchpunish', 'Tap to punish players!', ['tpunish'])
             ];
             /**
              * @var BaseCommand[] $commands
@@ -148,6 +155,12 @@ class Main extends PluginBase{
      */
     public function getFrozen(): Cache{
         return $this->frozen;
+    }
+    /**
+     * @return IntContainer
+     */
+    public function getTapPunishUsers(): IntContainer{
+        return $this->tapPunish;
     }
     /**
      * @param int $type

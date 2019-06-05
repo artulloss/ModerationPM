@@ -15,7 +15,6 @@ use ARTulloss\ModerationPM\Database\Container\Punishment;
 use ARTulloss\ModerationPM\Discord\Colors;
 use ARTulloss\ModerationPM\Main;
 use ARTulloss\ModerationPM\Utilities\Utilities;
-use CortexPE\Commando\exception\InvalidErrorCode;
 use DateTime;
 use dktapps\pmforms\CustomForm;
 use dktapps\pmforms\CustomFormResponse;
@@ -51,7 +50,7 @@ abstract class FormPunishmentModerationCommandOnline extends FormModerationComma
      */
     public function __construct(Main $main, string $name, string $description, array $lengths, array $reasons, array $aliases = []) {
         parent::__construct($main, $name, $description, $aliases);
-        $this->setPermission('moderation.' . $this->provider->typeToString(static::TYPE, false));
+        $this->setPermission(Main::PERMISSION_PREFIX . $this->provider->typeToString(static::TYPE, false));
         $this->setLengths($lengths);
         $this->setReasons($reasons);
     }

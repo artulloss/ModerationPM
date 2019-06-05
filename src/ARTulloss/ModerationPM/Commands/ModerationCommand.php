@@ -39,6 +39,7 @@ abstract class ModerationCommand extends BaseCommand{
         $this->provider = $main->getProvider();
     }
     /**
+     * @throws \ARTulloss\ModerationPM\libs\CortexPE\Commando\exception\ArgumentOrderException
      * @throws \CortexPE\Commando\exception\ArgumentOrderException
      */
     protected function prepare(): void{

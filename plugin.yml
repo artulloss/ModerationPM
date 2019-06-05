@@ -4,3 +4,29 @@ version: 0.0.1
 api: 3.0.0
 author: ARTulloss
 description: Moderation System
+permissions:
+  moderation:
+    default: "false"
+    description: "ModerationPM root permission"
+    children:
+      moderation.ban:
+        default: "op"
+        description: "Allows to ban players"
+      moderation.ban_ip:
+        default: "op"
+        description: "Allows to ban players IP addresses"
+      moderation.mute:
+        default: "op"
+        description: "Allows to mute players"
+      moderation.unban:
+        default: "op"
+        description: "Allows to unban players"
+      moderation.unban_ip:
+        default: "op"
+        description: "Allows to unban players IP addresses"
+      moderation.unmute:
+        default: "op"
+        description: "Allows to unmute players"
+      moderation.touch_punish:
+        default: "op"
+        description: "Allows to use touch punish for hackers with hard to see names"

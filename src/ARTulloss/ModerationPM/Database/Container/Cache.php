@@ -7,11 +7,10 @@
  */
 declare(strict_types=1);
 
-namespace ARTulloss\ModerationPM\Database\Cache;
+namespace ARTulloss\ModerationPM\Database\Container;
 
-use ARTulloss\ModerationPM\Main;
+use ARTulloss\ModerationPM\Database\Provider;
 use ARTulloss\ModerationPM\Utilities\Utilities;
-use pocketmine\Player;
 use pocketmine\plugin\Plugin;
 
 /**
@@ -19,11 +18,7 @@ use pocketmine\plugin\Plugin;
  * Useful for storing data that we don't want to fetch repeatedly
  * @package ARTulloss\ModerationPM\Database\Cache
  */
-class Cache{
-    /** @var Main $plugin */
-    private $plugin;
-    /** @var bool $cache */
-    private $cache;
+class Cache extends BoolContainer{
     /** @var int $type */
     private $type;
     /**
@@ -32,29 +27,11 @@ class Cache{
      * @param int $type
      */
     public function __construct(Plugin $plugin, int $type) {
-        $this->plugin = $plugin;
+        parent::__construct($plugin);
         $this->type = $type;
     }
-    /**
-     * @param Player $player
-     */
-    public function action(Player $player): void{
-        $this->cache[$player->getName()] = true;
-    }
-    /**
-     * @param Player $player
-     */
-    public function reverseAction(Player $player): void{
-        unset($this->cache[$player->getName()]);
-    }
-    /**
-     * @param Player $player
-     * @return bool
-     */
-    public function checkState(Player $player): bool{
-        return $this->cache[$player->getName()] ?? false;
-    }
     public function refresh(): void{
+        /** @var Provider $provider */
         $provider = $this->plugin->getProvider();
         $provider->asyncGetPunishments($this->type, function (array $result) use ($provider): void{
             $cache = [];
