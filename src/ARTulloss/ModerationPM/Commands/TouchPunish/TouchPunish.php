@@ -50,8 +50,10 @@ class TouchPunish extends ModerationCommand implements CommandConstants{
                             $this->sendError(self::ERR_INVALID_ARG_VALUE, ['value' => $args['type'], 'position' => 0]);
                             return;
                     }
-                } else
+                } else {
                     $this->sendUsage();
+                    return;
+                }
                 $sender->sendMessage(TextFormat::GREEN . "You're in touch punish mode!");
                 $this->plugin->getTapPunishUsers()->action($sender, $type);
             }
