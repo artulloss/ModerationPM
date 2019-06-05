@@ -61,12 +61,10 @@ class Listener implements PMListener{
                         foreach ($result as $key => $entry) {
                             $resultClone = $result;
                             /** @var Punishment $potentialPunishment
-                             * @var Punishment|null $punishment
-                             */
+                             * @var Punishment|null $punishment */
                             $potentialPunishment = Punishment::fromDatabaseQuery($resultClone, $key, Punishment::TYPE_IP_BAN);
                             if ($potentialPunishment !== null and
-                                // Take the longest IP ban, or vs || is very important here, || breaks functionality
-                                ($potentialPunishment->getUntil() === Punishment::FOREVER) || (Utilities::dumpReturn($punishment === null || $potentialPunishment->getUntil() > $punishment->getUntil())))
+                                ($potentialPunishment->getUntil() === Punishment::FOREVER) || ($punishment === null || $potentialPunishment->getUntil() > $punishment->getUntil()))
                                 $punishment = $potentialPunishment;
                         }
                         if($punishment !== null) {
