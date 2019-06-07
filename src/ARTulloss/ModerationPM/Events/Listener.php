@@ -22,16 +22,20 @@ use pocketmine\event\server\DataPacketReceiveEvent;
 use pocketmine\network\mcpe\protocol\LoginPacket;
 use pocketmine\Player;
 use function strtr;
+use function substr;
 
 class Listener implements PMListener{
     /** @var Main $plugin */
     private $plugin;
+    /** @var string $staffChatChar */
+    private $staffChatChar;
     /**
      * Listener constructor.
      * @param Main $plugin
      */
     public function __construct(Main $plugin) {
         $this->plugin = $plugin;
+        $this->staffChatChar = $plugin->getCommandConfig()->getNested('Staff Chat.Inverse Character');
     }
 
     public function onLogin(DataPacketReceiveEvent $event): void{
@@ -101,6 +105,11 @@ class Listener implements PMListener{
                             $this->plugin->getMuted()->reverseAction($player);
                         }
                     });
+
+                    if($player->hasPermission('moderation.staff_chat')) {
+                        $this->plugin->getStaffChat()->addToStaffChat($player);
+                    }
+
                 });
             });
         }
@@ -110,8 +119,31 @@ class Listener implements PMListener{
      */
     public function onTalk(PlayerChatEvent $event): void{
         $player = $event->getPlayer();
-        if($this->plugin->getMuted()->checkState($player))
+
+        if($this->plugin->getMuted()->checkState($player)) {
             $event->setCancelled();
+            return;
+        }
+
+        $msg = $event->getMessage();
+
+        $toggledStaffChat = $this->plugin->getStaffChatToggled();
+        $staffChat = $this->plugin->getStaffChat();
+
+        if($staffChat->isInStaffChat($player)) {
+            if($msg[0] === $this->staffChatChar) {
+                $msg = substr($msg, 1);
+                if($toggledStaffChat->checkState($player))
+                    $event->setMessage($msg);
+                else {
+                    $staffChat->sendMessage($player, $msg);
+                    $event->setCancelled();
+                }
+            } elseif($toggledStaffChat->checkState($player)) {
+                $staffChat->sendMessage($player, $msg);
+                $event->setCancelled();
+            }
+        }
     }
     public function onMove(PlayerMoveEvent $event): void{
         $player = $event->getPlayer();
@@ -121,12 +153,13 @@ class Listener implements PMListener{
     /**
      * @param EntityDamageEvent $event
      */
-    public function onTap(EntityDamageEvent $event): void{
-        if($event instanceof EntityDamageByEntityEvent) {
+    public function onTap(EntityDamageEvent $event): void
+    {
+        if ($event instanceof EntityDamageByEntityEvent) {
             $damager = $event->getDamager();
             $player = $event->getEntity();
             $tapPunish = $this->plugin->getTapPunishUsers();
-            if($damager instanceof Player && $player instanceof Player && $tapPunish->checkState($damager) !== null) {
+            if ($damager instanceof Player && $player instanceof Player && $tapPunish->checkState($damager) !== null) {
                 $event->setCancelled();
                 switch ($this->plugin->getTapPunishUsers()->checkState($damager)) {
                     case Punishment::TYPE_BAN;

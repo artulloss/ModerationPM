@@ -17,6 +17,7 @@ use CortexPE\Commando\args\RawStringArgument;
 use pocketmine\command\CommandSender;
 use pocketmine\Player;
 use pocketmine\utils\TextFormat;
+use function var_dump;
 
 class TouchPunish extends ModerationCommand implements CommandConstants{
 
@@ -26,23 +27,34 @@ class TouchPunish extends ModerationCommand implements CommandConstants{
     }
 
     protected function prepare(): void{
-        $this->registerArgument(0, new RawStringArgument('type'));
+        $this->registerArgument(0, new RawStringArgument('type', true));
     }
     public function onRun(CommandSender $sender, string $aliasUsed, array $args): void{
         if($sender instanceof Player) {
             if($this->testPermission($sender)) {
+
+                $tapPunish = $this->plugin->getTapPunishUsers();
+
+                // Toggle it off
+
+                if($tapPunish->checkState($sender) !== null) {
+                    $tapPunish->reverseAction($sender);
+                    $sender->sendMessage(TextFormat::GREEN . 'Touch punish was toggled off!');
+                    return;
+                }
+
                 if(isset($args['type'])) {
                     $type = $this->provider->stringToType($args['type']);
                 } else {
                     $this->sendUsage();
                     return;
                 }
-                $sender->sendMessage(TextFormat::GREEN . "You're in touch punish mode!");
+                $sender->sendMessage(TextFormat::GREEN . "You're in touch punish mode! Type the command again to toggle it off!");
 
                 if($type === null)
                     $this->sendError(self::ERR_INVALID_ARG_VALUE, ['value' => $args['type'], 'position' => 0]);
                 else
-                    $this->plugin->getTapPunishUsers()->action($sender, $type);
+                    $tapPunish->action($sender, $type);
             }
         } else
             $sender->sendMessage(self::PLAYER_ONLY);

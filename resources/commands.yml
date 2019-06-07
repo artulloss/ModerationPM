@@ -101,3 +101,6 @@ List:
     - "For: {reason}"
   Command: # unban player etc
     "un{type} {player}"
+Staff Chat:
+  Format: "§9[Staff Chat] {player} » {msg}"
+  Inverse Character: "!"

@@ -9,11 +9,13 @@ use ARTulloss\ModerationPM\Commands\Form\Punishments\BanIPCommand;
 use ARTulloss\ModerationPM\Commands\Form\Punishments\FreezeCommand;
 use ARTulloss\ModerationPM\Commands\Form\Punishments\MuteCommand;
 use ARTulloss\ModerationPM\Commands\Form\PunishmentsList\ListPunishmentsCommand;
+use ARTulloss\ModerationPM\Commands\Miscellaneous\StaffChatCommand;
 use ARTulloss\ModerationPM\Commands\ReversePunishments\UnbanCommand;
 use ARTulloss\ModerationPM\Commands\ReversePunishments\UnfreezeCommand;
 use ARTulloss\ModerationPM\Commands\ReversePunishments\UnBanIPCommand;
 use ARTulloss\ModerationPM\Commands\ReversePunishments\UnmuteCommand;
 use ARTulloss\ModerationPM\Commands\TouchPunish\TouchPunish;
+use ARTulloss\ModerationPM\Database\Container\BoolContainer;
 use ARTulloss\ModerationPM\Database\Container\Cache;
 use ARTulloss\ModerationPM\Database\Container\Punishment;
 use ARTulloss\ModerationPM\Database\MySqlProvider;
@@ -21,6 +23,7 @@ use ARTulloss\ModerationPM\Database\Provider;
 use ARTulloss\ModerationPM\Database\Container\IntContainer;
 use ARTulloss\ModerationPM\Discord\DiscordLogger;
 use ARTulloss\ModerationPM\Events\Listener;
+use ARTulloss\ModerationPM\StaffChat\StaffChat;
 use CortexPE\Commando\BaseCommand;
 use CortexPE\Commando\PacketHooker;
 use pocketmine\plugin\PluginBase;
@@ -52,6 +55,10 @@ class Main extends PluginBase{
     private $frozen;
     /** @var IntContainer $tapPunish */
     private $tapPunish;
+    /** @var StaffChat $staffChat */
+    private $staffChat;
+    /** @var BoolContainer $staffChatToggled */
+    private $staffChatToggled;
     /**
      * @throws \CortexPE\Commando\exception\HookAlreadyRegistered
      */
@@ -61,10 +68,11 @@ class Main extends PluginBase{
 	    if($this->isEnabled()) {
             $this->registerPacketHook();
             $this->registerCommands();
+            $this->registerCache();
+            $this->registerStaffChat();
             $this->getServer()->getPluginManager()->registerEvents(new Listener($this), $this);
             if($this->getCommandConfig()->getNested('Discord.Enable'))
                 $this->discordLogger = new DiscordLogger($this);
-            $this->registerCache();
             $this->tapPunish = new IntContainer($this);
         }
 	}
@@ -101,7 +109,8 @@ class Main extends PluginBase{
                 new ListPunishmentsCommand($this, Punishment::TYPE_IP_BAN, 'ipbanlist', 'List IP banned players'),
                 new ListPunishmentsCommand($this, Punishment::TYPE_MUTE, 'mutelist', 'List muted players'),
                 new ListPunishmentsCommand($this, Punishment::TYPE_FREEZE, 'freezelist', 'List frozen players'),
-                new TouchPunish($this, 'touchpunish', 'Tap to punish players!', ['tpunish'])
+                new TouchPunish($this, 'touchpunish', 'Tap to punish players!', ['tpunish']),
+                new StaffChatCommand($this, 'staffchat', 'Staff only chat!', ['sc'])
             ];
             /**
              * @var BaseCommand[] $commands
@@ -130,6 +139,10 @@ class Main extends PluginBase{
         });
         $minutes = $this->getConfig()->getNested('database.cache');
         $this->getScheduler()->scheduleDelayedRepeatingTask($task, 1200 * $minutes, 1200 * $minutes);
+    }
+    public function registerStaffChat(): void{
+	    $this->staffChat = new StaffChat($this->commandConfig->getNested('Staff Chat.Format'));
+	    $this->staffChatToggled = new BoolContainer($this);
     }
     /**
      * @return Config
@@ -189,5 +202,17 @@ class Main extends PluginBase{
      */
     public function getDiscordLogger(): ?DiscordLogger{
         return $this->discordLogger;
+    }
+    /**
+     * @return StaffChat
+     */
+    public function getStaffChat(): StaffChat{
+        return $this->staffChat;
+    }
+    /**
+     * @return BoolContainer
+     */
+    public function getStaffChatToggled(): BoolContainer{
+        return $this->staffChatToggled;
     }
 }
