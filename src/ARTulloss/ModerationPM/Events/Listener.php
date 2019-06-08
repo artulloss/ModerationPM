@@ -105,11 +105,6 @@ class Listener implements PMListener{
                             $this->plugin->getMuted()->reverseAction($player);
                         }
                     });
-
-                    if($player->hasPermission('moderation.staff_chat')) {
-                        $this->plugin->getStaffChat()->addToStaffChat($player);
-                    }
-
                 });
             });
         }
@@ -130,6 +125,11 @@ class Listener implements PMListener{
         $toggledStaffChat = $this->plugin->getStaffChatToggled();
         $staffChat = $this->plugin->getStaffChat();
 
+        if($player->hasPermission('moderation.staff_chat'))
+            $staffChat->addToStaffChat($player);
+        else
+            $staffChat->removeFromStaffChat($player);
+
         if($staffChat->isInStaffChat($player)) {
             if($msg[0] === $this->staffChatChar) {
                 $msg = substr($msg, 1);
@@ -145,6 +145,9 @@ class Listener implements PMListener{
             }
         }
     }
+    /**
+     * @param PlayerMoveEvent $event
+     */
     public function onMove(PlayerMoveEvent $event): void{
         $player = $event->getPlayer();
         if($this->plugin->getFrozen()->checkState($player))
@@ -160,25 +163,14 @@ class Listener implements PMListener{
             $player = $event->getEntity();
             $tapPunish = $this->plugin->getTapPunishUsers();
             if ($damager instanceof Player && $player instanceof Player && $tapPunish->checkState($damager) !== null) {
-                $event->setCancelled();
-                switch ($this->plugin->getTapPunishUsers()->checkState($damager)) {
-                    case Punishment::TYPE_BAN;
-                        $command = 'ban {player}';
-                        break;
-                    case Punishment::TYPE_IP_BAN;
-                        $command = 'ban-ip {player}';
-                        break;
-                    case Punishment::TYPE_MUTE;
-                        $command = 'mute {player}';
-                        break;
-                    case Punishment::TYPE_FREEZE;
-                        $command = 'freeze {player}';
-                        break;
-                    default:
-                        return;
+                $type = $this->plugin->getTapPunishUsers()->checkState($damager);
+                $command = $this->plugin->getProvider()
+                    ->resolveType($type, 'ban {player}', 'ban-ip {player}', 'mute {player}', 'freeze {player}', 'kick {player}', false);
+                if($command !== null) {
+                    $event->setCancelled();
+                    $damager->getServer()->dispatchCommand($damager, strtr($command, ['{player}' => $player->getName()]));
+                    $tapPunish->reverseAction($damager);
                 }
-                $damager->getServer()->dispatchCommand($damager, strtr($command, ['{player}' => $player->getName()]));
-                $tapPunish->reverseAction($damager);
             }
         }
     }

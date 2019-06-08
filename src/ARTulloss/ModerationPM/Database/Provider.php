@@ -109,12 +109,18 @@ abstract class Provider{
                 break;
             case Punishment::TYPE_FREEZE:
                 $return = 'freeze';
+                break;
+            case Punishment::TYPE_KICK:
+                $return = 'kick';
         }
         if(isset($return))
             return $caps ? ucwords($return) : $return;
         throw new InvalidArgumentException('Invalid type, please use the constants provided');
     }
-
+    /**
+     * @param string $string
+     * @return int|null
+     */
     public function stringToType(string $string): ?int{
         switch ($string) {
             case 'ban':
@@ -127,6 +133,8 @@ abstract class Provider{
                 return Punishment::TYPE_MUTE;
             case 'freeze':
                 return Punishment::TYPE_FREEZE;
+            case 'kick':
+                return Punishment::TYPE_KICK;
             default:
                 return null;
         }
@@ -137,10 +145,11 @@ abstract class Provider{
      * @param string $ipBan
      * @param string $mute
      * @param string $freeze
+     * @param string|null $kick
      * @param bool $throwError
      * @return string|null
      */
-    public function resolveType(int $type, string $ban, string $ipBan, string $mute, string $freeze, $throwError = true): ?string{
+    public function resolveType(int $type, string $ban, string $ipBan, string $mute, string $freeze, string $kick = null, $throwError = true): ?string{
         switch ($type) {
             case Punishment::TYPE_BAN:
                 return $ban;
@@ -150,6 +159,10 @@ abstract class Provider{
                 return $mute;
             case Punishment::TYPE_FREEZE:
                 return $freeze;
+            case Punishment::TYPE_KICK:
+                if($kick === null && $throwError)
+                    throw new InvalidArgumentException('Invalid type, please use the constants provided');
+                return $kick;
             default:
                 if($throwError)
                     throw new InvalidArgumentException('Invalid type, please use the constants provided');

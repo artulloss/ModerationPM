@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace ARTulloss\ModerationPM\Commands\Form;
 
 use ARTulloss\ModerationPM\Commands\ModerationCommand;
+use ARTulloss\ModerationPM\Utilities\Utilities;
 use pocketmine\command\CommandSender;
 use pocketmine\command\ConsoleCommandSender;
 use pocketmine\Player;
@@ -27,22 +28,29 @@ abstract class FormModerationCommandOnline extends ModerationCommand{
      * @param array $args
      */
     final public function onRun(CommandSender $sender, string $aliasUsed, array $args): void{
-        if(($player = $this->resolveOnlinePlayer($sender, $args['name'])) && $player !== null) {
-            if ($sender instanceof Player) {
-                $this->runAsPlayer($sender, $player);
-            } elseif ($sender instanceof ConsoleCommandSender) {
-                $this->runAsConsole($sender, $player);
+        Utilities::dumpReturn($this->getPermission());
+        if(isset($args['name'])) {
+            if(($player = $this->resolveOnlinePlayer($sender, $args['name'])) && $player !== null) {
+                if ($sender instanceof Player) {
+                    $this->runAsPlayer($sender, $player, $args);
+                } elseif ($sender instanceof ConsoleCommandSender) {
+                    $this->runAsConsole($sender, $player, $args);
+                }
             }
-        }
+        } else
+            $this->sendUsage();
     }
     /**
      * @param Player $sender
      * @param Player $player
+     * @param array $args
      */
-    abstract public function runAsPlayer(Player $sender, Player $player): void;
+    abstract public function runAsPlayer(Player $sender, Player $player, array $args): void;
+
     /**
-     * @param ConsoleCommandSender $sender
+     * @param CommandSender $sender
      * @param Player $player
+     * @param array $args
      */
-    abstract public function runAsConsole(ConsoleCommandSender $sender, Player $player): void;
+    abstract public function runAsConsole(CommandSender $sender, Player $player, array $args): void;
 }

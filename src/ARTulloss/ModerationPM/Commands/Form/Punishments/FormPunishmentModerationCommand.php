@@ -9,35 +9,41 @@ declare(strict_types=1);
 
 namespace ARTulloss\ModerationPM\Commands\Form\Punishments;
 
+use ARTulloss\ModerationPM\Commands\Arguments\DateTimeArgument;
+use ARTulloss\ModerationPM\Commands\Arguments\ForeverArgument;
+use ARTulloss\ModerationPM\Commands\Arguments\MessageArgument;
 use ARTulloss\ModerationPM\Commands\Form\FormModerationCommand;
+use ARTulloss\ModerationPM\Commands\Form\Punishments\Traits\LengthTrait;
+use ARTulloss\ModerationPM\Commands\Form\Punishments\Traits\ReasonsTrait;
 use ARTulloss\ModerationPM\Database\Container\PlayerData;
 use ARTulloss\ModerationPM\Database\Container\Punishment;
-use ARTulloss\ModerationPM\Discord\Colors;
 use ARTulloss\ModerationPM\Main;
-use ARTulloss\ModerationPM\Utilities\Utilities;
-use DateTime;
 use dktapps\pmforms\CustomForm;
 use dktapps\pmforms\CustomFormResponse;
 use dktapps\pmforms\element\Dropdown;
 use dktapps\pmforms\element\StepSlider;
-use Exception;
-use InvalidArgumentException;
 use pocketmine\command\CommandSender;
 use pocketmine\Player;
-use pocketmine\utils\TextFormat;
+use Exception;
+use DateTime;
 use function str_replace;
 use function strtolower;
 use function strtr;
 
-abstract class FormPunishmentModerationCommandOnline extends FormModerationCommand{
+abstract class FormPunishmentModerationCommand extends FormModerationCommand implements PunishmentCommand{
     /** @var string[] $lengths */
     protected $lengths;
     /** @var string[] $reasons */
     protected $reasons;
 
-    protected const TYPE = Punishment::TYPE_BAN;
-    protected const COLOR = Colors::RED;
-    protected const MESSAGE_SUCCESS = TextFormat::GREEN . 'Success!';
+    use LengthTrait, ReasonsTrait;
+
+    protected function prepare(): void{
+        parent::prepare();
+        $this->registerArgument(1, new DateTimeArgument('length', true));
+        $this->registerArgument(1, new ForeverArgument('length', true));
+        $this->registerArgument(2, new MessageArgument('reason', true));
+    }
 
     /**
      * FormPunishmentModerationCommandOnline constructor.
@@ -80,21 +86,6 @@ abstract class FormPunishmentModerationCommandOnline extends FormModerationComma
             $this->callback($sender, $data, $args['length'], $args['reason']);
         else
             $this->sendError(self::ERR_INSUFFICIENT_ARGUMENTS);
-    }
-    /**
-     * @param string[] $lengths
-     */
-    protected function setLengths(array $lengths): void{
-         foreach ($lengths as $length)
-             if(preg_match(Utilities::DATE_TIME_REGEX, $length) === 0 && strtolower($length) !== 'forever')
-                 throw new InvalidArgumentException(str_replace('{length}', $length, Utilities::DATE_TIME_REGEX_FAILED));
-         $this->lengths = $lengths;
-    }
-    /**
-     * @param string[] $reasons
-     */
-    protected function setReasons(array $reasons): void{
-        $this->reasons = $reasons;
     }
     /**
      * @param CommandSender $sender

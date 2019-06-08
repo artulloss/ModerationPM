@@ -14,13 +14,12 @@ use ARTulloss\ModerationPM\Discord\Colors;
 use pocketmine\Player;
 use pocketmine\utils\TextFormat;
 
-class BanCommand extends FormPunishmentModerationCommandOnline{
+class BanCommand extends FormPunishmentModerationCommand{
 
     protected const TITLE = 'Ban {player}';
-    protected const TYPE = Punishment::TYPE_BAN;
-    protected const COLOR = Colors::RED;
-
-    protected const MESSAGE_SUCCESS = TextFormat::GREEN . 'Successfully banned {player}!';
+    public const TYPE = Punishment::TYPE_BAN;
+    public const COLOR = Colors::RED;
+    public const MESSAGE_SUCCESS = TextFormat::GREEN . 'Successfully banned {player}!';
 
     public function onlinePunish(Player $player, string $message): void{
         $player->kick($message, false);

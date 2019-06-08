@@ -14,12 +14,12 @@ use ARTulloss\ModerationPM\Discord\Colors;
 use pocketmine\Player;
 use pocketmine\utils\TextFormat;
 
-class MuteCommand extends FormPunishmentModerationCommandOnline{
+class MuteCommand extends FormPunishmentModerationCommand{
 
     protected const TITLE = 'Mute {player}';
-    protected const TYPE = Punishment::TYPE_MUTE;
-    protected const COLOR = Colors::GRAY;
-    protected const MESSAGE_SUCCESS = TextFormat::GREEN . 'Successfully muted {player}!';
+    public const TYPE = Punishment::TYPE_MUTE;
+    public const COLOR = Colors::GRAY;
+    public const MESSAGE_SUCCESS = TextFormat::GREEN . 'Successfully muted {player}!';
 
     /**
      * @param Player $player

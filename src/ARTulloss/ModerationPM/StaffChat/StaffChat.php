@@ -21,7 +21,7 @@ class StaffChat{
      * StaffChat constructor.
      * @param string $format
      */
-    public function __constrvauct(string $format) {
+    public function __construct(string $format) {
         $this->format = $format;
     }
     /**
@@ -46,7 +46,7 @@ class StaffChat{
      */
     public function sendMessage(Player $player, string $msg): void{
         $msg = str_replace(['{player}', '{msg}'], [$player->getName(), $msg], $this->format);
-        foreach ($this->staff as $player)
+        foreach ((array)$this->staff as $player)
             $player->sendMessage($msg);
     }
 }

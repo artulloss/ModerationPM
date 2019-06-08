@@ -19,7 +19,6 @@ class MessageArgument extends TextArgument{
     public function canParse(string $testString, CommandSender $sender): bool{
         return strlen($testString) <= 32; // Max in varchar reason
     }
-
     public function getNetworkType(): int{
         return AvailableCommandsPacket::ARG_TYPE_MESSAGE;
     }

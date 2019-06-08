@@ -55,7 +55,7 @@ class ListPunishmentsCommand extends ModerationCommand implements CommandConstan
                         }
                         if($entries ?? null !== null) {
                             $name = $this->provider->typeToString($this->type);
-                            $sender->sendForm(new MenuForm($name, $name, $entries, function (Player $player, int $selectedOption) use ($punishments, $commandConfig): void{
+                            $sender->sendForm(new MenuForm($name . 'list', $name, $entries, function (Player $player, int $selectedOption) use ($punishments, $commandConfig): void{
                                 /** @var Punishment $punishment */
                                 $punishment = $punishments[$selectedOption];
                                 $type = $this->provider->resolveType($this->type, 'ban', 'ban-ip', 'mute', 'freeze');

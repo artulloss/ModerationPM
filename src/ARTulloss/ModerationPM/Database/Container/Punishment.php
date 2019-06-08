@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace ARTulloss\ModerationPM\Database\Container;
 
 use DateTime;
+use http\Exception\InvalidArgumentException;
 
 class Punishment extends DataContainer{
 
@@ -17,6 +18,7 @@ class Punishment extends DataContainer{
     public const TYPE_IP_BAN = 2;
     public const TYPE_MUTE = 3;
     public const TYPE_FREEZE = 4;
+    public const TYPE_KICK = 5;
 
     public const FOREVER = 0;
 
@@ -96,6 +98,8 @@ class Punishment extends DataContainer{
      * @return DataContainer|null
      */
     public static function fromDatabaseQuery(array $data, $key = 0, int $type = self::TYPE_BAN): ?DataContainer{
+        if($type === self::TYPE_KICK)
+            throw new InvalidArgumentException('Kicks can not be saved in the database!');
         if (self::hasNecessary($data, $key, ['name', 'staff_name', 'reason', 'until']))
             return new Punishment($data['name'], $data['staff_name'], $type, $data['reason'], $data['until']);
         return null;

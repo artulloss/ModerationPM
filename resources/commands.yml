@@ -11,6 +11,10 @@ Discord: # Logging for commands
   Content-Unpunish:
     - "Player: {player}"
     - "Staff: {staff}"
+  Content-Kick:
+    - "Player: {player}"
+    - "Staff: {staff}"
+    - "Reason: {reason}"
   Footer: Versai Network
   Image: https://raw.githubusercontent.com/versai-network/icons/master/Versai_Rounded.png
 Ban:
@@ -95,6 +99,13 @@ Freeze:
     - "You are frozen!"
     - "For: {reason}"
     - "Until: {until}"
+Kick:
+  Reasons:
+    - Foo
+    - Bar
+  Message:
+    - "You were kicked!"
+    - "For: {reason}"
 List:
   Format:
     - "{player} by {staff}"

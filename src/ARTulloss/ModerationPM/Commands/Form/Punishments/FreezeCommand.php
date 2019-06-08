@@ -14,13 +14,12 @@ use ARTulloss\ModerationPM\Discord\Colors;
 use pocketmine\Player;
 use pocketmine\utils\TextFormat;
 
-class FreezeCommand extends FormPunishmentModerationCommandOnline{
+class FreezeCommand extends FormPunishmentModerationCommand{
 
     protected const TITLE = 'Freeze {player}';
-    protected const TYPE = Punishment::TYPE_FREEZE;
-    protected const COLOR = Colors::BLUE;
-
-    protected const MESSAGE_SUCCESS = TextFormat::GREEN . 'Successfully froze {player}!';
+    public const TYPE = Punishment::TYPE_FREEZE;
+    public const COLOR = Colors::BLUE;
+    public const MESSAGE_SUCCESS = TextFormat::GREEN . 'Successfully froze {player}!';
 
     public function onlinePunish(Player $player, string $message): void{
         $player->sendMessage($message);

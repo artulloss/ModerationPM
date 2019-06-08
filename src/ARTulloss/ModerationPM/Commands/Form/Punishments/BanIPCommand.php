@@ -17,8 +17,7 @@ use pocketmine\utils\TextFormat;
 class BanIPCommand extends BanCommand
 {
     protected const TITLE = 'IP Ban {player}';
-    protected const TYPE = Punishment::TYPE_IP_BAN;
-    protected const COLOR = Colors::RED;
-
-    protected const MESSAGE_SUCCESS = TextFormat::GREEN . 'Successfully IP banned {player}!';
+    public const TYPE = Punishment::TYPE_IP_BAN;
+    public const COLOR = Colors::RED;
+    public const MESSAGE_SUCCESS = TextFormat::GREEN . 'Successfully IP banned {player}!';
 }

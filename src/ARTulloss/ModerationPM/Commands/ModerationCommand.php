@@ -15,11 +15,11 @@ use ARTulloss\ModerationPM\Main;
 use ARTulloss\ModerationPM\Utilities\Utilities;
 use CortexPE\Commando\args\RawStringArgument;
 use CortexPE\Commando\BaseCommand;
+use CortexPE\Commando\exception\ArgumentOrderException;
 use pocketmine\command\CommandSender;
 use pocketmine\Player;
-use pocketmine\utils\TextFormat;
 
-abstract class ModerationCommand extends BaseCommand{
+abstract class ModerationCommand extends BaseCommand implements CommandConstants{
 
     protected const TITLE = 'Moderation';
     /** @var Provider $provider */
@@ -39,7 +39,7 @@ abstract class ModerationCommand extends BaseCommand{
         $this->provider = $main->getProvider();
     }
     /**
-     * @throws \ARTulloss\ModerationPM\libs\CortexPE\Commando\exception\ArgumentOrderException
+     * @throws ArgumentOrderException
      * @throws \CortexPE\Commando\exception\ArgumentOrderException
      */
     protected function prepare(): void{
@@ -54,7 +54,7 @@ abstract class ModerationCommand extends BaseCommand{
     public function resolveOnlinePlayer(CommandSender $sender, string $name, bool $silent = false): ?Player{
         $player = Utilities::getPlayer($name);
         if ($player === null && !$silent)
-            $sender->sendMessage(TextFormat::RED . "That player is offline or doesn't exist!");
+            $sender->sendMessage(self::PLAYER_OFFLINE);
         return $player;
     }
     /**

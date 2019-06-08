@@ -19,7 +19,6 @@ class DateTimeArgument extends RawStringArgument{
     public function canParse(string $testString, CommandSender $sender): bool{
         return (bool) preg_match(Utilities::DATE_TIME_REGEX, $testString);
     }
-
     public function getSpanLength(): int{
         return 2;
     }

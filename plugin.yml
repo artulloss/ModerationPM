@@ -18,6 +18,12 @@ permissions:
       moderation.mute:
         default: "op"
         description: "Allows to mute players"
+      moderation.freeze:
+        default: "op"
+        description: "Allows to freeze players"
+      moderation.kick:
+        default: "op"
+        description: "Allows to kick players"
       moderation.unban:
         default: "op"
         description: "Allows to unban players"
@@ -27,9 +33,15 @@ permissions:
       moderation.unmute:
         default: "op"
         description: "Allows to unmute players"
+      moderation.unfreeze:
+        default: "op"
+        description: "Allows to unfreeze players"
       moderation.list:
         default: "op"
         description: "Allows to view all punishment types"
       moderation.touch_punish:
         default: "op"
         description: "Allows to use touch punish for hackers with hard to see names"
+      moderation.staff_chat:
+        default: "op"
+        description: "Allows to use the staff chat"

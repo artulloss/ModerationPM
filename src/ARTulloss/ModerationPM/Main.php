@@ -7,6 +7,7 @@ namespace ARTulloss\ModerationPM;
 use ARTulloss\ModerationPM\Commands\Form\Punishments\BanCommand;
 use ARTulloss\ModerationPM\Commands\Form\Punishments\BanIPCommand;
 use ARTulloss\ModerationPM\Commands\Form\Punishments\FreezeCommand;
+use ARTulloss\ModerationPM\Commands\Form\Punishments\KickCommand;
 use ARTulloss\ModerationPM\Commands\Form\Punishments\MuteCommand;
 use ARTulloss\ModerationPM\Commands\Form\PunishmentsList\ListPunishmentsCommand;
 use ARTulloss\ModerationPM\Commands\Miscellaneous\StaffChatCommand;
@@ -39,7 +40,7 @@ use function implode;
 
 class Main extends PluginBase{
 
-    public const PERMISSION_PREFIX = 'moderation';
+    public const PERMISSION_PREFIX = 'moderation.';
 
     /** @var DataConnector $database */
     private $database;
@@ -100,7 +101,8 @@ class Main extends PluginBase{
                 new BanCommand($this, 'ban', 'Ban a player!', $config->getNested('Ban.Lengths') ?? $forever, $config->getNested('Ban.Reasons') ?? $error),
                 new BanIPCommand($this, 'ban-ip', 'IP Ban a player!', $config->getNested('Ip Ban.Lengths') ?? $forever, $config->getNested('Ip Ban.Reasons') ?? $error),
                 new MuteCommand($this,'mute', 'Mute a player!', $config->getNested('Mute.Lengths') ?? $forever, $config->getNested('Mute.Reasons') ?? $error),
-                new FreezeCommand($this,'freeze', 'Freeze a player', $config->getNested('Freeze.Lengths') ?? $forever, $config->getNested('Freeze.Reasons') ?? $error),
+                new FreezeCommand($this,'freeze', 'Freeze a player!', $config->getNested('Freeze.Lengths') ?? $forever, $config->getNested('Freeze.Reasons') ?? $error),
+                new KickCommand($this, 'kick', 'Kick a player!', $config->getNested('Kick.Reasons') ?? $error),
                 new UnbanCommand($this, 'unban', 'Unban a player!'),
                 new UnBanIPCommand($this, 'unban-ip', "Unban a player's IP!"),
                 new UnmuteCommand($this, 'unmute', 'Unmute a player!'),
@@ -180,22 +182,25 @@ class Main extends PluginBase{
     public function getTapPunishUsers(): IntContainer{
         return $this->tapPunish;
     }
+
     /**
      * @param int $type
      * @param string $reason
-     * @param int $time
+     * @param int|null $time
      * @return string
      * @throws Exception
      */
-    public function resolvePunishmentMessage(int $type, string $reason, int $time): string{
-
+    public function resolvePunishmentMessage(int $type, string $reason, int $time = null): string{
         $format = $this->commandConfig->getNested($this->provider->typeToString($type) . '.Message') ?? ['Error'];
         $format = implode($format, TextFormat::EOL);
-        $until = $time !== 0 ? ((new DateTime())->setTimestamp($time))->format('Y-m-d H:i:s') : 'Forever';
-        return strtr($format, [
-            '{reason}' => $reason,
-            '{until}' => $until
-        ]);
+        $pairs = [
+            '{reason}' => $reason
+        ];
+        if($time !== null) {
+            $until = $time !== 0 ? ((new DateTime())->setTimestamp($time))->format('Y-m-d H:i:s') : 'Forever';
+            $pairs['{until}'] = $until;
+        }
+        return strtr($format, $pairs);
     }
     /**
      * @return DiscordLogger|null

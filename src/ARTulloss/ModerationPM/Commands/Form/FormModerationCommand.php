@@ -9,11 +9,9 @@ declare(strict_types=1);
 
 namespace ARTulloss\ModerationPM\Commands\Form;
 
-use ARTulloss\ModerationPM\Commands\Arguments\DateTimeArgument;
-use ARTulloss\ModerationPM\Commands\Arguments\ForeverArgument;
-use ARTulloss\ModerationPM\Commands\Arguments\MessageArgument;
 use ARTulloss\ModerationPM\Commands\ModerationCommand;
 use ARTulloss\ModerationPM\Database\Container\PlayerData;
+use ARTulloss\ModerationPM\Utilities\Utilities;
 use pocketmine\command\CommandSender;
 use pocketmine\command\ConsoleCommandSender;
 use pocketmine\Player;
@@ -26,13 +24,6 @@ use pocketmine\utils\TextFormat;
  */
 abstract class FormModerationCommand extends ModerationCommand{
 
-    protected function prepare(): void{
-        parent::prepare();
-        $this->registerArgument(1, new DateTimeArgument('length', true));
-        $this->registerArgument(1, new ForeverArgument('length', true));
-        $this->registerArgument(2, new MessageArgument('reason', true));
-    }
-
     /**
      * Splits the command into the run as player and run as console
      * @param CommandSender $sender
@@ -40,6 +31,7 @@ abstract class FormModerationCommand extends ModerationCommand{
      * @param array $args
      */
     final public function onRun(CommandSender $sender, string $aliasUsed, array $args): void{
+        Utilities::dumpReturn($this->getPermission());
         if(isset($args['name'])) {
             $name = $args['name'];
             $onlinePlayer = $this->resolveOnlinePlayer($sender, $name, true);
