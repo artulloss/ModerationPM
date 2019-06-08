@@ -14,7 +14,6 @@ use http\Exception\InvalidArgumentException;
 trait LengthTrait{
     /** @var string[] $lengths */
     protected $lengths;
-
     /**
      * @param string[] $lengths
      */

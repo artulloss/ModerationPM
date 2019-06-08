@@ -11,7 +11,6 @@ namespace ARTulloss\ModerationPM\Commands\Form;
 
 use ARTulloss\ModerationPM\Commands\ModerationCommand;
 use ARTulloss\ModerationPM\Database\Container\PlayerData;
-use ARTulloss\ModerationPM\Utilities\Utilities;
 use pocketmine\command\CommandSender;
 use pocketmine\command\ConsoleCommandSender;
 use pocketmine\Player;
@@ -31,7 +30,6 @@ abstract class FormModerationCommand extends ModerationCommand{
      * @param array $args
      */
     final public function onRun(CommandSender $sender, string $aliasUsed, array $args): void{
-        Utilities::dumpReturn($this->getPermission());
         if(isset($args['name'])) {
             $name = $args['name'];
             $onlinePlayer = $this->resolveOnlinePlayer($sender, $name, true);
