@@ -15,7 +15,7 @@ use ARTulloss\ModerationPM\Commands\ModerationCommand;
 use pocketmine\command\CommandSender;
 use pocketmine\Player;
 
-class StaffChatCommand extends ModerationCommand implements CommandConstants{
+class StaffChatCommand extends ModerationCommand {
 
     protected function prepare(): void{
         $this->registerArgument(0, new MessageArgument('message', true));
@@ -24,6 +24,7 @@ class StaffChatCommand extends ModerationCommand implements CommandConstants{
     public function onRun(CommandSender $sender, string $aliasUsed, array $args): void{
         if($sender instanceof Player) {
             if($this->testPermission($sender)) {
+
                 $staffChat = $this->plugin->getStaffChat();
 
                 if(!$staffChat->isInStaffChat($sender))
@@ -42,7 +43,12 @@ class StaffChatCommand extends ModerationCommand implements CommandConstants{
                 }
                 $staffChatToggled->action($sender);
             }
+        } elseif(isset($args['message'])) {
+            $staffChat = $this->plugin->getStaffChat();
+            if(!$staffChat->isInStaffChat($sender))
+                $staffChat->addToStaffChat($sender);
+            $staffChat->sendMessage($sender, $args['message']);
         } else
-            $sender->sendMessage(self::PLAYER_ONLY);
+            $this->sendUsage();
     }
 }

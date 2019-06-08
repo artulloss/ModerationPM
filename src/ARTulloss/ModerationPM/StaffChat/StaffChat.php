@@ -9,11 +9,11 @@ declare(strict_types=1);
 
 namespace ARTulloss\ModerationPM\StaffChat;
 
-use pocketmine\Player;
+use pocketmine\command\CommandSender;
 use function str_replace;
 
 class StaffChat{
-    /** @var Player[] $staff */
+    /** @var CommandSender[] $staff */
     private $staff;
     /** @var string $format */
     private $format;
@@ -25,27 +25,27 @@ class StaffChat{
         $this->format = $format;
     }
     /**
-     * @param Player $player
+     * @param CommandSender $player
      */
-    public function addToStaffChat(Player $player): void{
+    public function addToStaffChat(CommandSender $player): void{
         $this->staff[$player->getName()] = $player;
     }
 
-    public function isInStaffChat(Player $player): bool{
+    public function isInStaffChat(CommandSender $player): bool{
         return isset($this->staff[$player->getName()]);
     }
     /**
-     * @param Player $player
+     * @param CommandSender $player
      */
-    public function removeFromStaffChat(Player $player): void{
+    public function removeFromStaffChat(CommandSender $player): void{
         unset($this->staff[$player->getName()]);
     }
     /**
-     * @param Player $player
+     * @param CommandSender $sender
      * @param string $msg
      */
-    public function sendMessage(Player $player, string $msg): void{
-        $msg = str_replace(['{player}', '{msg}'], [$player->getName(), $msg], $this->format);
+    public function sendMessage(CommandSender $sender, string $msg): void{
+        $msg = str_replace(['{player}', '{msg}'], [$sender->getName(), $msg], $this->format);
         foreach ((array)$this->staff as $player)
             $player->sendMessage($msg);
     }
