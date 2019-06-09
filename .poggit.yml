@@ -13,4 +13,6 @@ projects:
         version: ^1.0.0
       - src: CortexPE/Commando/Commando
         version: ^0.3.1
+      - src: CortexPE/DiscordWebhookAPI/DiscordWebhookAPI
+        version: ^0.3.1
 ...
