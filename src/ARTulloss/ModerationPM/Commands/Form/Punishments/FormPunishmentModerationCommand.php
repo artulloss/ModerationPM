@@ -99,7 +99,7 @@ abstract class FormPunishmentModerationCommand extends FormModerationCommand imp
             $until = Punishment::FOREVER;
         } else
             $until = (new DateTime("now + $until"))->getTimestamp();
-        $this->provider->asyncPunishPlayer($data->getName(), static::TYPE, $sender->getName(), $reason, $until);
+        $this->provider->asyncPunishPlayer($data->getID(), static::TYPE, $sender->getName(), $reason, $until);
         $player = $sender->getServer()->getPlayerExact($data->getName());
         if($player !== null)
             $this->onlinePunish($player, $this->plugin->resolvePunishmentMessage(static::TYPE, $reason, $until));

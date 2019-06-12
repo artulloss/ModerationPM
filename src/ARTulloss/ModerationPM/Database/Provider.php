@@ -49,7 +49,6 @@ abstract class Provider{
         $this->plugin->getLogger()->emergency('Something went wrong with the initialization of the database, disabling!');
         $this->plugin->getServer()->getPluginManager()->disablePlugin($this->plugin);
     }
-
     /**
      * Add a player to the data
      * @param string $name
@@ -59,26 +58,30 @@ abstract class Provider{
      * @param callable|null $onComplete
      */
     abstract public function asyncRegisterPlayer(string $name, string $xuid, string $deviceID, string $ip, callable $onComplete = null): void;
+
     /**
      * @param string $name
+     * @param string|null $xuid
+     * @param string|null $device_id
+     * @param bool $inclusive
      * @param callable $callback
      */
-    abstract public function asyncGetPlayer(string $name, callable $callback): void;
+    abstract public function asyncGetPlayer(string $name, ?string $xuid, ?string $device_id, bool $inclusive, callable $callback): void;
     /**
-     * @param string $name
+     * @param int $id
      * @param int $type
      * @param string $staffName
      * @param string $reason
      * @param int|null $until
      * @param callable|null $onComplete
      */
-    abstract public function asyncPunishPlayer(string $name, int $type, string $staffName, string $reason, int $until, callable $onComplete = null): void;
+    abstract public function asyncPunishPlayer(int $id, int $type, string $staffName, string $reason, int $until, callable $onComplete = null): void;
     /**
-     * @param string $name
+     * @param int $id
      * @param int $type
      * @param callable $callback
      */
-    abstract public function asyncCheckPunished(string $name, int $type, callable $callback): void;
+    abstract public function asyncCheckPunished(int $id, int $type, callable $callback): void;
     /**
      * Pass punishments to callback
      * @param int $type
@@ -86,11 +89,11 @@ abstract class Provider{
      */
     abstract public function asyncGetPunishments(int $type, callable $callback): void;
     /**
-     * @param string $name
+     * @param int $id
      * @param int $type
      * @param callable|null $callback
      */
-    abstract public function asyncRemovePunishment(string $name, int $type, callable $callback = null): void;
+    abstract public function asyncRemovePunishment(int $id, int $type, callable $callback = null): void;
     /**
      * @param int $type
      * @param bool $caps

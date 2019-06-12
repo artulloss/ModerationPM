@@ -18,6 +18,7 @@ use ARTulloss\ModerationPM\Commands\ReversePunishments\UnmuteCommand;
 use ARTulloss\ModerationPM\Commands\TouchPunish\TouchPunish;
 use ARTulloss\ModerationPM\Database\Container\BoolContainer;
 use ARTulloss\ModerationPM\Database\Container\Cache;
+use ARTulloss\ModerationPM\Database\Container\PlayerDataContainer;
 use ARTulloss\ModerationPM\Database\Container\Punishment;
 use ARTulloss\ModerationPM\Database\MySqlProvider;
 use ARTulloss\ModerationPM\Database\Provider;
@@ -46,6 +47,8 @@ class Main extends PluginBase{
     private $database;
     /** @var Provider $provider */
     private $provider;
+    /** @var PlayerDataContainer $playerData */
+    private $playerData;
     /** @var Config $commandConfig */
     private $commandConfig;
     /** @var DiscordLogger $discordLogger */
@@ -74,7 +77,7 @@ class Main extends PluginBase{
             $this->getServer()->getPluginManager()->registerEvents(new Listener($this), $this);
             if($this->getCommandConfig()->getNested('Discord.Enable'))
                 $this->discordLogger = new DiscordLogger($this);
-            $this->tapPunish = new IntContainer($this);
+            $this->tapPunish = new IntContainer();
         }
 	}
 	public function initConfigs(): void{
@@ -131,6 +134,7 @@ class Main extends PluginBase{
             'mysql' => 'mysql.sql'
         ]);
         $this->provider = new MySqlProvider($this);
+        $this->playerData = new PlayerDataContainer();
     }
     public function registerCache(): void{
         $this->muted = new Cache($this, Punishment::TYPE_MUTE);
@@ -163,6 +167,12 @@ class Main extends PluginBase{
      */
     public function getProvider(): Provider{
         return $this->provider;
+    }
+    /**
+     * @return PlayerDataContainer
+     */
+    public function getPlayerData(): PlayerDataContainer{
+        return $this->playerData;
     }
     /**
      * @return Cache

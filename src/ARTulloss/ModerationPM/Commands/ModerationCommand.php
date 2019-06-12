@@ -59,11 +59,19 @@ abstract class ModerationCommand extends BaseCommand implements CommandConstants
     }
     /**
      * @param string $playerName
+     * @param string|null $xuid
+     * @param string|null $device_id
+     * @param bool $inclusive
      * @param callable $callback
      */
-    public function passPlayerData(string $playerName, callable $callback): void{
-        $this->provider->asyncGetPlayer($playerName, function (array $result) use ($callback): void{
-            $callback(PlayerData::fromDatabaseQuery($result));
+    public function passPlayerData(string $playerName, ?string $xuid, ?string $device_id, bool $inclusive, callable $callback): void{
+        $this->provider->asyncGetPlayer($playerName, $xuid, $device_id, $inclusive, function (array $result) use ($callback): void {
+            foreach ($result as $player) {
+                $data = PlayerData::fromDatabaseQuery($player, PlayerData::NO_KEY);
+                if($data !== null)
+                    $dataArray[] = $data;
+            }
+        $callback($dataArray ?? null);
         });
     }
 }

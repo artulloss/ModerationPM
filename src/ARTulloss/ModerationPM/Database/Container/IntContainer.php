@@ -10,21 +10,10 @@ declare(strict_types=1);
 namespace ARTulloss\ModerationPM\Database\Container;
 
 use pocketmine\Player;
-use pocketmine\plugin\Plugin;
 
-class IntContainer
-{
-    /** @var Plugin $plugin */
-    protected $plugin;
+class IntContainer{
     /** @var bool $cache */
     protected $cache;
-    /**
-     * Cache constructor.
-     * @param Plugin $plugin
-     */
-    public function __construct(Plugin $plugin) {
-        $this->plugin = $plugin;
-    }
     /**
      * @param Player $player
      * @param int $value
@@ -43,6 +32,13 @@ class IntContainer
      * @return int
      */
     public function checkState(Player $player): ?int{
-        return $this->cache[$player->getName()] ?? null;
+        return $this->checkStateByName($player->getName());
+    }
+    /**
+     * @param string $name
+     * @return int|null
+     */
+    public function checkStateByName(string $name): ?int{
+        return $this->cache[$name] ?? null;
     }
 }

@@ -90,7 +90,6 @@ class Utilities{
      * @return mixed
      */
     public static function dumpReturn($dump) {
-        var_dump($dump);
         return $dump;
     }
 }

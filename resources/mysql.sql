@@ -4,10 +4,10 @@
 -- #     { players
 CREATE TABLE IF NOT EXISTS players (
   id INTEGER PRIMARY KEY AUTO_INCREMENT,
-  name VARCHAR(16) NOT NULL UNIQUE,
-  xuid VARCHAR(32) NOT NULL UNIQUE,
-  device_id VARCHAR(64) NOT NULL UNIQUE,
-  ip VARCHAR(64) NOT NULL NULL
+  name VARCHAR(16) NOT NULL,
+  xuid VARCHAR(32) NOT NULL,
+  device_id VARCHAR(64) NOT NULL,
+  ip VARCHAR(64) NOT NULL
 );
 -- #     }
 -- #     { bans
@@ -46,58 +46,51 @@ CREATE TABLE IF NOT EXISTS freezes (
   FOREIGN KEY (player_id) REFERENCES players(id)
 );
 -- #     }
--- #     { alias
-CREATE TABLE IF NOT EXISTS alias (
-   id INTEGER PRIMARY KEY AUTO_INCREMENT,
-   name VARCHAR(16) NOT NULL,
-   xuid VARCHAR(32) NOT NULL,
-   device_id VARCHAR(64) NOT NULL,
-   client_id VARCHAR(64) NOT NULL
-);
--- #     }
 -- #   }
--- #   { upsert
+-- #   { insert
 -- #     { players
 -- #       :player_name string
 -- #       :xuid string
 -- #       :device_id string
 -- #       :ip string
-INSERT INTO players (name, xuid, device_id, ip) VALUES (:player_name, :xuid, :device_id, :ip) ON DUPLICATE KEY UPDATE name = :player_name, xuid = :xuid, device_id = :device_id, ip = :ip;
+INSERT INTO players (name, xuid, device_id, ip) VALUES (:player_name, :xuid, :device_id, :ip);
 -- #     }
+-- #   }
+-- #   { upsert
 -- #     { bans
--- #       :player_name string
+-- #       :id int
 -- #       :staff_name string
 -- #       :reason string
 -- #       :until int
 INSERT INTO bans (player_id, staff_name, reason, until) VALUES (
-     (SELECT id FROM players WHERE lower(name) = lower(:player_name)), :staff_name, :reason, :until
+     :id, :staff_name, :reason, :until
 ) ON DUPLICATE KEY UPDATE staff_name = :staff_name, reason = :reason, until = :until;
 -- #     }
 -- #     { ip_bans
--- #       :player_name string
+-- #       :id int
 -- #       :staff_name string
 -- #       :reason string
 -- #       :until int
 INSERT INTO ip_bans (player_id, staff_name, reason, until) VALUES (
-     (SELECT id FROM players WHERE lower(name) = lower(:player_name)), :staff_name, :reason, :until
+     :id, :staff_name, :reason, :until
 ) ON DUPLICATE KEY UPDATE staff_name = :staff_name, reason = :reason, until = :until;
 -- #     }
 -- #     { mutes
--- #       :player_name string
+-- #       :id int
 -- #       :staff_name string
 -- #       :reason string
 -- #       :until int
 INSERT INTO mutes (player_id, staff_name, reason, until) VALUES (
-    (SELECT id FROM players WHERE lower(name) = lower(:player_name)), :staff_name, :reason, :until
+    :id, :staff_name, :reason, :until
 ) ON DUPLICATE KEY UPDATE staff_name = :staff_name, reason = :reason, until = :until;
 -- #     }
 -- #     { freezes
--- #       :player_name string
+-- #       :id int
 -- #       :staff_name string
 -- #       :reason string
 -- #       :until int
 INSERT INTO freezes (player_id, staff_name, reason, until) VALUES (
-     (SELECT id FROM players WHERE lower(name) = lower(:player_name)), :staff_name, :reason, :until
+     :id, :staff_name, :reason, :until
 ) ON DUPLICATE KEY UPDATE staff_name = :staff_name, reason = :reason, until = :until;
 -- #     }
 -- #   }
@@ -106,9 +99,17 @@ INSERT INTO freezes (player_id, staff_name, reason, until) VALUES (
 -- #       { all
 SELECT * FROM players;
 -- #       }
--- #       { player
+-- #       { player_exclusive
 -- #         :player_name string
-SELECT * FROM players WHERE LOWER(name) = LOWER(:player_name);
+-- #         :xuid string ~
+-- #         :device_id string ~
+SELECT * FROM players WHERE LOWER(name) = LOWER(:player_name) AND xuid = :xuid AND device_id = :device_id;
+-- #       }
+-- #       { player_inclusive
+-- #         :player_name string
+-- #         :xuid string ~
+-- #         :device_id string ~
+SELECT * FROM players WHERE LOWER(name) = LOWER(:player_name) OR xuid = :xuid OR device_id = :device_id;
 -- #       }
 -- #     }
 -- #     { bans
@@ -117,10 +118,10 @@ SELECT bans.*, players.* FROM bans
   INNER JOIN players ON bans.player_id = players.id;
 -- #       }
 -- #       { player
--- #         :player_name string
+-- #         :id int
 SELECT bans.*, players.name FROM bans
   INNER JOIN players ON bans.player_id = players.id
-WHERE players.id = (SELECT id from players WHERE name = :player_name);
+WHERE players.id = :id;
 -- #       }
 -- #     }
 -- #     { ip_bans
@@ -129,10 +130,10 @@ SELECT ip_bans.*, players.* FROM ip_bans
   RIGHT JOIN players ON ip_bans.player_id = players.id;
 -- #       }
 -- #       { player
--- #         :player_name string
+-- #         :id int
 SELECT ip_bans.*, players.* FROM ip_bans
   RIGHT JOIN players ON ip_bans.player_id = players.id
-WHERE players.ip = (SELECT ip from players WHERE name = :player_name);
+WHERE players.id = :id;
 -- #       }
 -- #     }
 -- #     { mutes
@@ -141,10 +142,10 @@ SELECT mutes.*, players.* FROM mutes
   INNER JOIN players ON mutes.player_id = players.id;
 -- #       }
 -- #       { player
--- #         :player_name string
+-- #         :id int
 SELECT mutes.*, players.name FROM mutes
   INNER JOIN players ON mutes.player_id = players.id
-WHERE players.id = (SELECT id from players WHERE name = :player_name);
+WHERE players.id = :id;
 -- #       }
 -- #     }
 -- #     { freezes
@@ -153,31 +154,31 @@ SELECT freezes.*, players.* FROM freezes
   INNER JOIN players ON freezes.player_id = players.id;
 -- #       }
 -- #       { player
--- #         :player_name string
+-- #         :id int
 SELECT freezes.*, players.name FROM freezes
   INNER JOIN players ON freezes.player_id = players.id
-WHERE players.id = (SELECT id from players WHERE name = :player_name);
+WHERE players.id = :id;
 -- #       }
 -- #     }
 -- #   }
 -- #   { delete
 -- #     { bans
--- #       :player_name string
-DELETE FROM bans WHERE player_id = (SELECT id FROM players WHERE name = :player_name);
+-- #       :id int
+DELETE FROM bans WHERE player_id = :id;
 -- #     }
 -- #     { ip_bans
--- #       :player_name string
+-- #       :id int
 DELETE ip_bans FROM ip_bans
   INNER JOIN players ON ip_bans.player_id = players.id
-WHERE players.ip = (SELECT ip FROM players WHERE id = (SELECT id FROM players WHERE name = :player_name));
+WHERE players.ip = (SELECT ip FROM players WHERE id = :id);
 -- #     }
 -- #     { mutes
--- #       :player_name string
-DELETE FROM mutes WHERE player_id = (SELECT id FROM players WHERE name = :player_name);
+-- #       :id int
+DELETE FROM mutes WHERE player_id = :id;
 -- #     }
 -- #     { freezes
--- #       :player_name string
-DELETE FROM freezes WHERE player_id = (SELECT id FROM players WHERE name = :player_name);
+-- #       :id int
+DELETE FROM freezes WHERE player_id = :id;
 -- #     }
 -- #   }
 -- # }

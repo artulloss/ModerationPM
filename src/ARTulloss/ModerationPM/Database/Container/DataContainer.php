@@ -26,7 +26,6 @@ abstract class DataContainer{
      * @return bool
      */
     protected static function hasNecessary(array &$data, int $key, array $checkForKeys): bool{
-    //    var_dump($data);
         if(is_array($data) && $data !== []) {
             if(isset($data[$key]) && $key !== self::NO_KEY)
                 $data = $data[$key];

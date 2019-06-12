@@ -11,13 +11,11 @@ namespace ARTulloss\ModerationPM\Commands\TouchPunish;
 
 use ARTulloss\ModerationPM\Commands\CommandConstants;
 use ARTulloss\ModerationPM\Commands\ModerationCommand;
-use ARTulloss\ModerationPM\Database\Container\Punishment;
 use ARTulloss\ModerationPM\Main;
 use CortexPE\Commando\args\RawStringArgument;
 use pocketmine\command\CommandSender;
 use pocketmine\Player;
 use pocketmine\utils\TextFormat;
-use function var_dump;
 
 class TouchPunish extends ModerationCommand implements CommandConstants{
 

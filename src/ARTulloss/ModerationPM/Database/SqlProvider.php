@@ -47,7 +47,7 @@ abstract class SqlProvider extends Provider implements Queries{
     }
     public function asyncRegisterPlayer(string $name, string $xuid, string $deviceID, string $ip, callable $onComplete = null): void{
         Await::f2c(function () use ($name, $xuid, $deviceID, $ip): Generator{
-            yield $this->asyncInsert(Queries::MODERATION_UPSERT_PLAYERS, [
+            yield $this->asyncInsert(Queries::MODERATION_INSERT_PLAYERS, [
                 'player_name' => $name,
                 'xuid' => $xuid,
                 'device_id' => $deviceID,
@@ -55,20 +55,22 @@ abstract class SqlProvider extends Provider implements Queries{
             ]);
         }, $onComplete, $this->getOnError());
     }
-    public function asyncGetPlayer(string $name, callable $callback): void{
+    public function asyncGetPlayer(string $name, ?string $xuid, ?string $device_id, bool $inclusive, callable $callback): void{
         Utils::validateCallableSignature(function (array $result): void{}, $callback);
-        Await::f2c(function () use ($callback, $name): Generator{
-            $select = yield $this->asyncSelect(Queries::MODERATION_GET_PLAYERS_PLAYER, [
-                'player_name' => $name
+        Await::f2c(function () use ($callback, $name, $xuid, $device_id, $inclusive): Generator{
+            $select = yield $this->asyncSelect($inclusive ? Queries::MODERATION_GET_PLAYERS_PLAYER_INCLUSIVE : Queries::MODERATION_GET_PLAYERS_PLAYER_EXCLUSIVE, [
+                'player_name' => $name,
+                'xuid' => $xuid,
+                'device_id' => $device_id
             ]);
             $callback($select);
         }, null, $this->getOnError());
     }
-    public function asyncPunishPlayer(string $name, int $type, string $staffName, string $reason, int $until, callable $onComplete = null): void{
-        Await::f2c(function () use ($name, $type, $staffName, $reason, $until): Generator{
+    public function asyncPunishPlayer(int $id, int $type, string $staffName, string $reason, int $until, callable $onComplete = null): void{
+        Await::f2c(function () use ($id, $type, $staffName, $reason, $until): Generator{
             $query = $this->resolveType($type, Queries::MODERATION_UPSERT_BANS, Queries::MODERATION_UPSERT_IP_BANS, Queries::MODERATION_UPSERT_MUTES, Queries::MODERATION_UPSERT_FREEZES);
             yield $this->asyncInsert($query, [
-                'player_name' => $name,
+                'id' => $id,
                 'staff_name' => $staffName,
                 'reason' => $reason,
                 'until' => $until
@@ -83,21 +85,21 @@ abstract class SqlProvider extends Provider implements Queries{
             $callback($select);
         }, null, $this->getOnError());
     }
-    public function asyncCheckPunished(string $name, int $type, callable $callback): void{
+    public function asyncCheckPunished(int $id, int $type, callable $callback): void{
         Utils::validateCallableSignature(function (array $rows): void{}, $callback);
         $query = $this->resolveType($type, self::MODERATION_GET_BANS_PLAYER, self::MODERATION_GET_IP_BANS_PLAYER, self::MODERATION_GET_MUTES_PLAYER, self::MODERATION_GET_FREEZES_PLAYER);
-        Await::f2c(function () use ($query, $name, $callback): Generator{
+        Await::f2c(function () use ($query, $id, $callback): Generator{
             $select = yield $this->asyncSelect($query, [
-                'player_name' => $name
+                'id' => $id
             ]);
             $callback($select);
         }, null, $this->getOnError());
     }
-    public function asyncRemovePunishment(string $name, int $type, callable $callback = null): void{
+    public function asyncRemovePunishment(int $id, int $type, callable $callback = null): void{
         $query = $this->resolveType($type, self::MODERATION_DELETE_BANS, self::MODERATION_DELETE_IP_BANS, self::MODERATION_DELETE_MUTES, self::MODERATION_DELETE_FREEZES);
-        Await::f2c(function () use ($query, $name, $callback) {
+        Await::f2c(function () use ($query, $id, $callback) {
             $result = yield $this->asyncChange($query, [
-                'player_name' => $name
+                'id' => $id
             ]);
             if($callback !== null) {
                 Utils::validateCallableSignature(function (int $rows): void{}, $callback);

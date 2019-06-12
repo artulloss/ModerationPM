@@ -18,6 +18,7 @@ use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\Listener as PMListener;
 use pocketmine\event\player\PlayerChatEvent;
 use pocketmine\event\player\PlayerMoveEvent;
+use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\event\server\DataPacketReceiveEvent;
 use pocketmine\network\mcpe\protocol\LoginPacket;
 use pocketmine\Player;
@@ -37,77 +38,115 @@ class Listener implements PMListener{
         $this->plugin = $plugin;
         $this->staffChatChar = $plugin->getCommandConfig()->getNested('Staff Chat.Inverse Character');
     }
-
+    /**
+     * @param DataPacketReceiveEvent $event
+     */
     public function onLogin(DataPacketReceiveEvent $event): void{
         $pk = $event->getPacket();
         if($pk instanceof LoginPacket) {
             $player = $event->getPlayer();
             $name = $pk->username;
             $xuid = $pk->xuid;
+            if($xuid === '')
+                return;
             $deviceID = $pk->clientData['DeviceId'];
             $provider = $this->plugin->getProvider();
-            $provider->asyncGetPlayer($name, function (array $result) use ($provider, $player, $name, $xuid, $deviceID): void{
-                if(PlayerData::fromDatabaseQuery($result) === null)
-                    $provider->asyncRegisterPlayer($name, $xuid, $deviceID, $player->getAddress());
-                $provider->asyncCheckPunished($name, Punishment::TYPE_BAN, function (array $result) use ($provider, $player, $name): void{
-                    /** @var Punishment $punishment */
-                    $punishment = Punishment::fromDatabaseQuery($result, 0, Punishment::TYPE_BAN);
-                    if($punishment !== null) {
-                        $until = $punishment->getUntil();
-                        if(Utilities::isStillPunished($until)) {
-                            $player->kick($this->plugin->resolvePunishmentMessage(Punishment::TYPE_BAN, $punishment->getReason(), $until), false);
-                            return;
-                        }
-                        $this->plugin->getProvider()->asyncRemovePunishment($name, Punishment::TYPE_BAN, $this->getOnDelete($name, Punishment::TYPE_BAN));
-                    }
-                    $provider->asyncCheckPunished($name, Punishment::TYPE_IP_BAN, function (array $result) use ($player, $name): void{
-                        $punishment = null;
-                        foreach ($result as $key => $entry) {
-                            $resultClone = $result;
-                            /** @var Punishment $potentialPunishment
-                             * @var Punishment|null $punishment */
-                            $potentialPunishment = Punishment::fromDatabaseQuery($resultClone, $key, Punishment::TYPE_IP_BAN);
-                            if ($potentialPunishment !== null and
-                                ($potentialPunishment->getUntil() === Punishment::FOREVER) || ($punishment === null || $potentialPunishment->getUntil() > $punishment->getUntil()))
-                                $punishment = $potentialPunishment;
-                        }
-                        if($punishment !== null) {
-                            $until = $punishment->getUntil();
-                            if(Utilities::isStillPunished($until)) {
-                                $player->kick($this->plugin->resolvePunishmentMessage(Punishment::TYPE_IP_BAN, $punishment->getReason(), $until), false);
-                                return;
-                            }
-                            $this->plugin->getProvider()->asyncRemovePunishment($name, Punishment::TYPE_IP_BAN, $this->getOnDelete($name, Punishment::TYPE_IP_BAN));
-                        }
+            $provider->asyncGetPlayer($name, $xuid, $deviceID, false, function (array $result) use ($provider, $player, $name, $xuid, $deviceID, $event): void{
+                $playerData = PlayerData::fromDatabaseQuery($result);
+                if ($playerData === null) {
+                    echo "playerData === null\n";
+                    $provider->asyncRegisterPlayer($name, $xuid, $deviceID, $player->getAddress(), function () use ($event): void {
+                        echo "SHOULD HAVE REGISTERED\n";
+                        $this->onLogin($event);
                     });
-                    $provider->asyncCheckPunished($name, Punishment::TYPE_FREEZE, function (array $result) use ($player, $name): void{
-                        /** @var Punishment $punishment */
-                        $punishment = Punishment::fromDatabaseQuery($result, 0, Punishment::TYPE_FREEZE);
-                        if($punishment !== null) {
-                            $until = $punishment->getUntil();
-                            if(Utilities::isStillPunished($until)) {
-                                $player->sendMessage($this->plugin->resolvePunishmentMessage(Punishment::TYPE_FREEZE, $punishment->getReason(), $until));
-                                $this->plugin->getFrozen()->action($player);
-                            } else
-                                $this->getOnDelete($name, Punishment::TYPE_FREEZE);
-                        }
-                    });
-                    $provider->asyncCheckPunished($name, Punishment::TYPE_MUTE, function (array $result) use ($player, $name): void{
-                        /** @var Punishment $punishment */
-                        $punishment = Punishment::fromDatabaseQuery($result, 0, Punishment::TYPE_MUTE);
-                        if($punishment !== null) {
-                            $until = $punishment->getUntil();
-                            if(Utilities::isStillPunished($until)) {
-                                $this->plugin->getMuted()->action($player);
-                                return;
-                            }
-                            $this->plugin->getProvider()->asyncRemovePunishment($name, Punishment::TYPE_MUTE, $this->getOnDelete($name, Punishment::TYPE_MUTE));
-                            $this->plugin->getMuted()->reverseAction($player);
-                        }
-                    });
-                });
+                    return;
+                }
+            });
+            $provider->asyncGetPlayer($name, $xuid, $deviceID, true, function (array $result) use ($player): void{
+               foreach ($result as $playerData) {
+                   $playerData = PlayerData::fromDatabaseQuery($playerData, PlayerData::NO_KEY);
+                   if($playerData !== null) {
+                       $this->checkAllPunishments($player, $playerData);
+                   }
+               }
             });
         }
+    }
+    /**
+     * @param Player $player
+     * @param PlayerData $playerData
+     */
+    public function checkAllPunishments(Player $player, PlayerData $playerData): void{
+        $provider = $this->plugin->getProvider();
+        $id = $playerData->getID();
+        $name = $playerData->getName();
+        $this->plugin->getPlayerData()->set($playerData); // Assign player and id together in RAM
+        $provider->asyncCheckPunished($id, Punishment::TYPE_BAN, function (array $result) use ($provider, $player, $id, $name): void {
+            /** @var Punishment $punishment */
+            $punishment = Punishment::fromDatabaseQuery($result, 0, Punishment::TYPE_BAN);
+            if ($punishment !== null) {
+                $until = $punishment->getUntil();
+                if (Utilities::isStillPunished($until)) {
+                    $player->kick($this->plugin->resolvePunishmentMessage(Punishment::TYPE_BAN, $punishment->getReason(), $until), false);
+                    return;
+                va
+                $this->plugin->getProvider()->asyncRemovePunishment($id, Punishment::TYPE_BAN, $this->getOnDelete($name, Punishment::TYPE_BAN));
+            }
+            $provider->asyncCheckPunished($id, Punishment::TYPE_IP_BAN, function (array $result) use ($player, $id, $name): void{
+                $punishment = null;
+                foreach ($result as $key => $entry) {
+                    $resultClone = $result;
+                    /** @var Punishment $potentialPunishment
+                     * @var Punishment|null $punishment
+                     */
+                    $potentialPunishment = Punishment::fromDatabaseQuery($resultClone, $key, Punishment::TYPE_IP_BAN);
+                    if ($potentialPunishment !== null and
+                        ($potentialPunishment->getUntil() === Punishment::FOREVER) || ($punishment === null || $potentialPunishment->getUntil() > $punishment->getUntil()))
+                        $punishment = $potentialPunishment;
+                }
+                if ($punishment !== null) {
+                    $until = $punishment->getUntil();
+                    if (Utilities::isStillPunished($until)) {
+                        $player->kick($this->plugin->resolvePunishmentMessage(Punishment::TYPE_IP_BAN, $punishment->getReason(), $until), false);
+                        return;
+                    }
+                    $this->plugin->getProvider()->asyncRemovePunishment($id, Punishment::TYPE_IP_BAN, $this->getOnDelete($name, Punishment::TYPE_IP_BAN));
+                }
+            });
+            $provider->asyncCheckPunished($id, Punishment::TYPE_FREEZE, function (array $result) use ($player, $id, $name): void {
+                /** @var Punishment $punishment */
+                $punishment = Punishment::fromDatabaseQuery($result, 0, Punishment::TYPE_FREEZE);
+                if ($punishment !== null) {
+                    $until = $punishment->getUntil();
+                    if (Utilities::isStillPunished($until)) {
+                        $this->plugin->getFrozen()->action($player);
+                        if($player->loggedIn)
+                            $player->sendMessage($this->plugin->resolvePunishmentMessage(Punishment::TYPE_FREEZE, $punishment->getReason(), $until));
+                    } else
+                        $this->plugin->getProvider()->asyncRemovePunishment($id, Punishment::TYPE_IP_BAN, $this->getOnDelete($name, Punishment::TYPE_FREEZE));
+                }
+            });
+            $provider->asyncCheckPunished($id, Punishment::TYPE_MUTE, function (array $result) use ($player, $id, $name): void {
+                /** @var Punishment $punishment */
+                $punishment = Punishment::fromDatabaseQuery($result, 0, Punishment::TYPE_MUTE);
+                if ($punishment !== null) {
+                    $until = $punishment->getUntil();
+                    if (Utilities::isStillPunished($until)) {
+                        $this->plugin->getMuted()->action($player);
+                        if($player->loggedIn)
+                            $player->sendMessage($this->plugin->resolvePunishmentMessage(Punishment::TYPE_MUTE, $punishment->getReason(), $until));
+                        return;
+                    }
+                    $this->plugin->getProvider()->asyncRemovePunishment($id, Punishment::TYPE_MUTE, $this->getOnDelete($name, Punishment::TYPE_MUTE));
+                }
+            });
+        });
+    }
+    /**
+     * @param PlayerQuitEvent $event
+     */
+    public function onQuit(PlayerQuitEvent $event): void{
+        $this->plugin->getPlayerData()->unset($event->getPlayer()->getName());
     }
     /**
      * @param PlayerChatEvent $event

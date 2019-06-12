@@ -12,202 +12,161 @@ namespace ARTulloss\ModerationPM\Database;
 interface Queries{
 	/**
 	 * <h4>Declared in:</h4>
-	 * - C:/Users/Adam/Desktop/stuff/pocketmine/plugins/ModerationPM/resources/mysql.sql:167
+	 * - C:/Users/Adam/Desktop/stuff/pocketmine/Redo 2/plugins/ModerationPM/resources/mysql.sql:168
 	 *
 	 * <h3>Variables</h3>
-	 * - <code>:player_name</code> string, required in mysql.sql
+	 * - <code>:id</code> int, required in mysql.sql
 	 */
 	public const MODERATION_DELETE_BANS = "moderation.delete.bans";
 
 	/**
 	 * <h4>Declared in:</h4>
-	 * - C:/Users/Adam/Desktop/stuff/pocketmine/plugins/ModerationPM/resources/mysql.sql:181
+	 * - C:/Users/Adam/Desktop/stuff/pocketmine/Redo 2/plugins/ModerationPM/resources/mysql.sql:182
 	 *
 	 * <h3>Variables</h3>
-	 * - <code>:player_name</code> string, required in mysql.sql
+	 * - <code>:id</code> int, required in mysql.sql
 	 */
 	public const MODERATION_DELETE_FREEZES = "moderation.delete.freezes";
 
 	/**
 	 * <h4>Declared in:</h4>
-	 * - C:/Users/Adam/Desktop/stuff/pocketmine/plugins/ModerationPM/resources/mysql.sql:173
+	 * - C:/Users/Adam/Desktop/stuff/pocketmine/Redo 2/plugins/ModerationPM/resources/mysql.sql:174
 	 *
 	 * <h3>Variables</h3>
-	 * - <code>:player_name</code> string, required in mysql.sql
+	 * - <code>:id</code> int, required in mysql.sql
 	 */
 	public const MODERATION_DELETE_IP_BANS = "moderation.delete.ip_bans";
 
 	/**
 	 * <h4>Declared in:</h4>
-	 * - C:/Users/Adam/Desktop/stuff/pocketmine/plugins/ModerationPM/resources/mysql.sql:177
+	 * - C:/Users/Adam/Desktop/stuff/pocketmine/Redo 2/plugins/ModerationPM/resources/mysql.sql:178
 	 *
 	 * <h3>Variables</h3>
-	 * - <code>:player_name</code> string, required in mysql.sql
+	 * - <code>:id</code> int, required in mysql.sql
 	 */
 	public const MODERATION_DELETE_MUTES = "moderation.delete.mutes";
 
 	/**
 	 * <h4>Declared in:</h4>
-	 * - C:/Users/Adam/Desktop/stuff/pocketmine/plugins/ModerationPM/resources/mysql.sql:118
+	 * - C:/Users/Adam/Desktop/stuff/pocketmine/Redo 2/plugins/ModerationPM/resources/mysql.sql:119
 	 */
 	public const MODERATION_GET_BANS_ALL = "moderation.get.bans.all";
 
 	/**
 	 * <h4>Declared in:</h4>
-	 * - C:/Users/Adam/Desktop/stuff/pocketmine/plugins/ModerationPM/resources/mysql.sql:124
+	 * - C:/Users/Adam/Desktop/stuff/pocketmine/Redo 2/plugins/ModerationPM/resources/mysql.sql:125
 	 *
 	 * <h3>Variables</h3>
-	 * - <code>:player_name</code> string, required in mysql.sql
+	 * - <code>:id</code> int, required in mysql.sql
 	 */
 	public const MODERATION_GET_BANS_PLAYER = "moderation.get.bans.player";
 
 	/**
 	 * <h4>Declared in:</h4>
-	 * - C:/Users/Adam/Desktop/stuff/pocketmine/plugins/ModerationPM/resources/mysql.sql:154
+	 * - C:/Users/Adam/Desktop/stuff/pocketmine/Redo 2/plugins/ModerationPM/resources/mysql.sql:155
 	 */
 	public const MODERATION_GET_FREEZES_ALL = "moderation.get.freezes.all";
 
 	/**
 	 * <h4>Declared in:</h4>
-	 * - C:/Users/Adam/Desktop/stuff/pocketmine/plugins/ModerationPM/resources/mysql.sql:160
+	 * - C:/Users/Adam/Desktop/stuff/pocketmine/Redo 2/plugins/ModerationPM/resources/mysql.sql:161
 	 *
 	 * <h3>Variables</h3>
-	 * - <code>:player_name</code> string, required in mysql.sql
+	 * - <code>:id</code> int, required in mysql.sql
 	 */
 	public const MODERATION_GET_FREEZES_PLAYER = "moderation.get.freezes.player";
 
 	/**
 	 * <h4>Declared in:</h4>
-	 * - C:/Users/Adam/Desktop/stuff/pocketmine/plugins/ModerationPM/resources/mysql.sql:130
+	 * - C:/Users/Adam/Desktop/stuff/pocketmine/Redo 2/plugins/ModerationPM/resources/mysql.sql:131
 	 */
 	public const MODERATION_GET_IP_BANS_ALL = "moderation.get.ip_bans.all";
 
 	/**
 	 * <h4>Declared in:</h4>
-	 * - C:/Users/Adam/Desktop/stuff/pocketmine/plugins/ModerationPM/resources/mysql.sql:136
+	 * - C:/Users/Adam/Desktop/stuff/pocketmine/Redo 2/plugins/ModerationPM/resources/mysql.sql:137
 	 *
 	 * <h3>Variables</h3>
-	 * - <code>:player_name</code> string, required in mysql.sql
+	 * - <code>:id</code> int, required in mysql.sql
 	 */
 	public const MODERATION_GET_IP_BANS_PLAYER = "moderation.get.ip_bans.player";
 
 	/**
 	 * <h4>Declared in:</h4>
-	 * - C:/Users/Adam/Desktop/stuff/pocketmine/plugins/ModerationPM/resources/mysql.sql:142
+	 * - C:/Users/Adam/Desktop/stuff/pocketmine/Redo 2/plugins/ModerationPM/resources/mysql.sql:143
 	 */
 	public const MODERATION_GET_MUTES_ALL = "moderation.get.mutes.all";
 
 	/**
 	 * <h4>Declared in:</h4>
-	 * - C:/Users/Adam/Desktop/stuff/pocketmine/plugins/ModerationPM/resources/mysql.sql:148
+	 * - C:/Users/Adam/Desktop/stuff/pocketmine/Redo 2/plugins/ModerationPM/resources/mysql.sql:149
 	 *
 	 * <h3>Variables</h3>
-	 * - <code>:player_name</code> string, required in mysql.sql
+	 * - <code>:id</code> int, required in mysql.sql
 	 */
 	public const MODERATION_GET_MUTES_PLAYER = "moderation.get.mutes.player";
 
 	/**
 	 * <h4>Declared in:</h4>
-	 * - C:/Users/Adam/Desktop/stuff/pocketmine/plugins/ModerationPM/resources/mysql.sql:108
+	 * - C:/Users/Adam/Desktop/stuff/pocketmine/Redo 2/plugins/ModerationPM/resources/mysql.sql:101
 	 */
 	public const MODERATION_GET_PLAYERS_ALL = "moderation.get.players.all";
 
 	/**
 	 * <h4>Declared in:</h4>
-	 * - C:/Users/Adam/Desktop/stuff/pocketmine/plugins/ModerationPM/resources/mysql.sql:112
+	 * - C:/Users/Adam/Desktop/stuff/pocketmine/Redo 2/plugins/ModerationPM/resources/mysql.sql:107
 	 *
 	 * <h3>Variables</h3>
 	 * - <code>:player_name</code> string, required in mysql.sql
+	 * - <code>:device_id</code> string, optional in mysql.sql
+	 * - <code>:xuid</code> string, optional in mysql.sql
 	 */
-	public const MODERATION_GET_PLAYERS_PLAYER = "moderation.get.players.player";
+	public const MODERATION_GET_PLAYERS_PLAYER_EXCLUSIVE = "moderation.get.players.player_exclusive";
 
 	/**
 	 * <h4>Declared in:</h4>
-	 * - C:/Users/Adam/Desktop/stuff/pocketmine/plugins/ModerationPM/resources/mysql.sql:57
+	 * - C:/Users/Adam/Desktop/stuff/pocketmine/Redo 2/plugins/ModerationPM/resources/mysql.sql:113
+	 *
+	 * <h3>Variables</h3>
+	 * - <code>:player_name</code> string, required in mysql.sql
+	 * - <code>:device_id</code> string, optional in mysql.sql
+	 * - <code>:xuid</code> string, optional in mysql.sql
 	 */
-	public const MODERATION_INIT_ALIAS = "moderation.init.alias";
+	public const MODERATION_GET_PLAYERS_PLAYER_INCLUSIVE = "moderation.get.players.player_inclusive";
 
 	/**
 	 * <h4>Declared in:</h4>
-	 * - C:/Users/Adam/Desktop/stuff/pocketmine/plugins/ModerationPM/resources/mysql.sql:21
+	 * - C:/Users/Adam/Desktop/stuff/pocketmine/Redo 2/plugins/ModerationPM/resources/mysql.sql:21
 	 */
 	public const MODERATION_INIT_BANS = "moderation.init.bans";
 
 	/**
 	 * <h4>Declared in:</h4>
-	 * - C:/Users/Adam/Desktop/stuff/pocketmine/plugins/ModerationPM/resources/mysql.sql:48
+	 * - C:/Users/Adam/Desktop/stuff/pocketmine/Redo 2/plugins/ModerationPM/resources/mysql.sql:48
 	 */
 	public const MODERATION_INIT_FREEZES = "moderation.init.freezes";
 
 	/**
 	 * <h4>Declared in:</h4>
-	 * - C:/Users/Adam/Desktop/stuff/pocketmine/plugins/ModerationPM/resources/mysql.sql:30
+	 * - C:/Users/Adam/Desktop/stuff/pocketmine/Redo 2/plugins/ModerationPM/resources/mysql.sql:30
 	 */
 	public const MODERATION_INIT_IP_BANS = "moderation.init.ip_bans";
 
 	/**
 	 * <h4>Declared in:</h4>
-	 * - C:/Users/Adam/Desktop/stuff/pocketmine/plugins/ModerationPM/resources/mysql.sql:39
+	 * - C:/Users/Adam/Desktop/stuff/pocketmine/Redo 2/plugins/ModerationPM/resources/mysql.sql:39
 	 */
 	public const MODERATION_INIT_MUTES = "moderation.init.mutes";
 
 	/**
 	 * <h4>Declared in:</h4>
-	 * - C:/Users/Adam/Desktop/stuff/pocketmine/plugins/ModerationPM/resources/mysql.sql:12
+	 * - C:/Users/Adam/Desktop/stuff/pocketmine/Redo 2/plugins/ModerationPM/resources/mysql.sql:12
 	 */
 	public const MODERATION_INIT_PLAYERS = "moderation.init.players";
 
 	/**
 	 * <h4>Declared in:</h4>
-	 * - C:/Users/Adam/Desktop/stuff/pocketmine/plugins/ModerationPM/resources/mysql.sql:75
-	 *
-	 * <h3>Variables</h3>
-	 * - <code>:player_name</code> string, required in mysql.sql
-	 * - <code>:staff_name</code> string, required in mysql.sql
-	 * - <code>:reason</code> string, required in mysql.sql
-	 * - <code>:until</code> int, required in mysql.sql
-	 */
-	public const MODERATION_UPSERT_BANS = "moderation.upsert.bans";
-
-	/**
-	 * <h4>Declared in:</h4>
-	 * - C:/Users/Adam/Desktop/stuff/pocketmine/plugins/ModerationPM/resources/mysql.sql:102
-	 *
-	 * <h3>Variables</h3>
-	 * - <code>:player_name</code> string, required in mysql.sql
-	 * - <code>:staff_name</code> string, required in mysql.sql
-	 * - <code>:reason</code> string, required in mysql.sql
-	 * - <code>:until</code> int, required in mysql.sql
-	 */
-	public const MODERATION_UPSERT_FREEZES = "moderation.upsert.freezes";
-
-	/**
-	 * <h4>Declared in:</h4>
-	 * - C:/Users/Adam/Desktop/stuff/pocketmine/plugins/ModerationPM/resources/mysql.sql:84
-	 *
-	 * <h3>Variables</h3>
-	 * - <code>:player_name</code> string, required in mysql.sql
-	 * - <code>:staff_name</code> string, required in mysql.sql
-	 * - <code>:reason</code> string, required in mysql.sql
-	 * - <code>:until</code> int, required in mysql.sql
-	 */
-	public const MODERATION_UPSERT_IP_BANS = "moderation.upsert.ip_bans";
-
-	/**
-	 * <h4>Declared in:</h4>
-	 * - C:/Users/Adam/Desktop/stuff/pocketmine/plugins/ModerationPM/resources/mysql.sql:93
-	 *
-	 * <h3>Variables</h3>
-	 * - <code>:player_name</code> string, required in mysql.sql
-	 * - <code>:staff_name</code> string, required in mysql.sql
-	 * - <code>:reason</code> string, required in mysql.sql
-	 * - <code>:until</code> int, required in mysql.sql
-	 */
-	public const MODERATION_UPSERT_MUTES = "moderation.upsert.mutes";
-
-	/**
-	 * <h4>Declared in:</h4>
-	 * - C:/Users/Adam/Desktop/stuff/pocketmine/plugins/ModerationPM/resources/mysql.sql:66
+	 * - C:/Users/Adam/Desktop/stuff/pocketmine/Redo 2/plugins/ModerationPM/resources/mysql.sql:57
 	 *
 	 * <h3>Variables</h3>
 	 * - <code>:player_name</code> string, required in mysql.sql
@@ -215,6 +174,54 @@ interface Queries{
 	 * - <code>:xuid</code> string, required in mysql.sql
 	 * - <code>:ip</code> string, required in mysql.sql
 	 */
-	public const MODERATION_UPSERT_PLAYERS = "moderation.upsert.players";
+	public const MODERATION_INSERT_PLAYERS = "moderation.insert.players";
+
+	/**
+	 * <h4>Declared in:</h4>
+	 * - C:/Users/Adam/Desktop/stuff/pocketmine/Redo 2/plugins/ModerationPM/resources/mysql.sql:68
+	 *
+	 * <h3>Variables</h3>
+	 * - <code>:staff_name</code> string, required in mysql.sql
+	 * - <code>:reason</code> string, required in mysql.sql
+	 * - <code>:until</code> int, required in mysql.sql
+	 * - <code>:id</code> int, required in mysql.sql
+	 */
+	public const MODERATION_UPSERT_BANS = "moderation.upsert.bans";
+
+	/**
+	 * <h4>Declared in:</h4>
+	 * - C:/Users/Adam/Desktop/stuff/pocketmine/Redo 2/plugins/ModerationPM/resources/mysql.sql:95
+	 *
+	 * <h3>Variables</h3>
+	 * - <code>:staff_name</code> string, required in mysql.sql
+	 * - <code>:reason</code> string, required in mysql.sql
+	 * - <code>:until</code> int, required in mysql.sql
+	 * - <code>:id</code> int, required in mysql.sql
+	 */
+	public const MODERATION_UPSERT_FREEZES = "moderation.upsert.freezes";
+
+	/**
+	 * <h4>Declared in:</h4>
+	 * - C:/Users/Adam/Desktop/stuff/pocketmine/Redo 2/plugins/ModerationPM/resources/mysql.sql:77
+	 *
+	 * <h3>Variables</h3>
+	 * - <code>:staff_name</code> string, required in mysql.sql
+	 * - <code>:reason</code> string, required in mysql.sql
+	 * - <code>:until</code> int, required in mysql.sql
+	 * - <code>:id</code> int, required in mysql.sql
+	 */
+	public const MODERATION_UPSERT_IP_BANS = "moderation.upsert.ip_bans";
+
+	/**
+	 * <h4>Declared in:</h4>
+	 * - C:/Users/Adam/Desktop/stuff/pocketmine/Redo 2/plugins/ModerationPM/resources/mysql.sql:86
+	 *
+	 * <h3>Variables</h3>
+	 * - <code>:staff_name</code> string, required in mysql.sql
+	 * - <code>:reason</code> string, required in mysql.sql
+	 * - <code>:until</code> int, required in mysql.sql
+	 * - <code>:id</code> int, required in mysql.sql
+	 */
+	public const MODERATION_UPSERT_MUTES = "moderation.upsert.mutes";
 
 }

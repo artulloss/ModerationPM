@@ -15,6 +15,7 @@ use pocketmine\command\CommandSender;
 use pocketmine\command\ConsoleCommandSender;
 use pocketmine\Player;
 use pocketmine\utils\TextFormat;
+use function strtolower;
 
 /**
  * Class FormModerationCommand
@@ -32,26 +33,33 @@ abstract class FormModerationCommand extends ModerationCommand{
     final public function onRun(CommandSender $sender, string $aliasUsed, array $args): void{
         if(isset($args['name'])) {
             $name = $args['name'];
-            $onlinePlayer = $this->resolveOnlinePlayer($sender, $name, true);
-            if($onlinePlayer !== null)
-                $name = $onlinePlayer->getName();
-            $this->passPlayerData($name, function (?PlayerData $playerData) use ($sender, $args): void{
-                if($playerData !== null) {
-                     if ($sender instanceof ConsoleCommandSender || (isset($args['length']) && isset($args['reason']) && $args['reason'] !== '' && ($good = true))) {
-                         if(isset($good) || (isset($args['length']) && isset($args['reason'])))
-                             $this->runAsConsole($sender, $playerData, $args);
-                         else {
-                             $this->sendUsage();
-                             return;
-                         }
-                     } elseif ($sender instanceof Player) {
-                         $this->runAsPlayer($sender, $playerData, $args);
-                     } else {
-                         $this->sendUsage();
-                         return;
-                     }
-                } else
-                    $sender->sendMessage(TextFormat::RED . 'Player does not exist!');
+            $data = $this->plugin->getPlayerData()->get($name);
+            if($data !== null) {
+                $name = $data->getName();
+            }
+            $this->passPlayerData($name, null, null, true, function (?array $playerDataArray) use ($sender, $name, $args): void{
+                if($playerDataArray !== null) {
+                    $lowerCaseName = strtolower($name);
+                    /** @var PlayerData $playerData */
+                    foreach ($playerDataArray as $playerData) {
+                        if(strtolower($playerData->getName()) === $lowerCaseName) {
+                            if ($sender instanceof ConsoleCommandSender || (isset($args['length']) && isset($args['reason']) && $args['reason'] !== '' && ($good = true))) {
+                                if(isset($good) || (isset($args['length']) && isset($args['reason'])))
+                                    $this->runAsConsole($sender, $playerData, $args);
+                                else {
+                                    $this->sendUsage();
+                                    return;
+                                }
+                            } elseif ($sender instanceof Player) {
+                                $this->runAsPlayer($sender, $playerData, $args);
+                            } else {
+                                $this->sendUsage();
+                                return;
+                            }
+                        } else
+                            $sender->sendMessage(TextFormat::RED . 'Player does not exist!');
+                    }
+                }
             });
         } else
             $this->sendUsage();
