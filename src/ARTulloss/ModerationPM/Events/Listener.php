@@ -54,9 +54,7 @@ class Listener implements PMListener{
             $provider->asyncGetPlayer($name, $xuid, $deviceID, false, function (array $result) use ($provider, $player, $name, $xuid, $deviceID, $event): void{
                 $playerData = PlayerData::fromDatabaseQuery($result);
                 if ($playerData === null) {
-                    echo "playerData === null\n";
                     $provider->asyncRegisterPlayer($name, $xuid, $deviceID, $player->getAddress(), function () use ($event): void {
-                        echo "SHOULD HAVE REGISTERED\n";
                         $this->onLogin($event);
                     });
                     return;
