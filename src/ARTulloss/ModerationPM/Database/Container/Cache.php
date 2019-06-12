@@ -105,14 +105,12 @@ class Cache extends BoolContainer{
         $plugin = $this->plugin;
         $provider = $plugin->getProvider();
         if(Utilities::isStillPunished($punishment->getUntil())) {
-            echo "STILL PUNISHED\n";
             $this->cache[$data->getName()] = true;
         } else {
             $server = $plugin->getServer();
             $name = $punishment->getPlayerName();
             $provider->asyncRemovePunishment($data->getID(), $this->type, function (int $rows) use ($plugin, $provider, $server, $name): void{
                 if($rows !== 0) {
-                    echo "REMOVED PUNISHMENT\n";
                     $expiredMsg = $provider->typeToString($this->type, false) . ' expired!';
                     $plugin->getLogger()->info("$name's " . $expiredMsg);
                     $player = $server->getPlayerExact($name);
