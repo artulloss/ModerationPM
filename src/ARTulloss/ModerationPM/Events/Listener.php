@@ -87,7 +87,7 @@ class Listener implements PMListener{
                 if (Utilities::isStillPunished($until)) {
                     $player->kick($this->plugin->resolvePunishmentMessage(Punishment::TYPE_BAN, $punishment->getReason(), $until), false);
                     return;
-                va
+                }
                 $this->plugin->getProvider()->asyncRemovePunishment($id, Punishment::TYPE_BAN, $this->getOnDelete($name, Punishment::TYPE_BAN));
             }
             $provider->asyncCheckPunished($id, Punishment::TYPE_IP_BAN, function (array $result) use ($player, $id, $name): void{
