@@ -104,7 +104,7 @@ class ListPunishmentsCommand extends ModerationCommand implements CommandConstan
      */
     public function asyncGetPunishments(callable $callback): void{
         Utils::validateCallableSignature(function (?array $punishments): void{}, $callback);
-        $this->provider->asyncGetPunishments($this->type, function (array $result) use ($callback): void {
+        $this->provider->asyncGetPunishments($this->type, function (array $result) use ($callback): void{
             foreach ($result as $punishmentValue) {
                 /** @var Punishment $punishment */
                 $punishment = Punishment::fromDatabaseQuery($punishmentValue, Punishment::NO_KEY, $this->type);

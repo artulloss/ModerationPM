@@ -28,6 +28,7 @@ use ARTulloss\ModerationPM\Events\Listener;
 use ARTulloss\ModerationPM\StaffChat\StaffChat;
 use CortexPE\Commando\BaseCommand;
 use CortexPE\Commando\PacketHooker;
+use function count;
 use pocketmine\plugin\PluginBase;
 use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat;
@@ -140,8 +141,10 @@ class Main extends PluginBase{
         $this->muted = new Cache($this, Punishment::TYPE_MUTE);
         $this->frozen = new Cache($this, Punishment::TYPE_FREEZE);
         $task = new CallbackTask(function (): void{
-            $this->muted->refresh();
-            $this->frozen->refresh();
+            if(count($this->getServer()->getOnlinePlayers()) > 0) {
+                $this->muted->refresh();
+                $this->frozen->refresh();
+            }
         });
         $minutes = $this->getConfig()->getNested('database.cache');
         $this->getScheduler()->scheduleDelayedRepeatingTask($task, 1200 * $minutes, 1200 * $minutes);
