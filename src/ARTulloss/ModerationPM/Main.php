@@ -28,7 +28,6 @@ use ARTulloss\ModerationPM\Events\Listener;
 use ARTulloss\ModerationPM\StaffChat\StaffChat;
 use CortexPE\Commando\BaseCommand;
 use CortexPE\Commando\PacketHooker;
-use function count;
 use pocketmine\plugin\PluginBase;
 use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat;
@@ -39,6 +38,7 @@ use DateTime;
 use Exception;
 use function strtr;
 use function implode;
+use function count;
 
 class Main extends PluginBase{
 
@@ -81,7 +81,11 @@ class Main extends PluginBase{
             $this->tapPunish = new IntContainer();
         }
 	}
-	public function initConfigs(): void{
+	public function onDisable(): void{
+        if(isset($this->database))
+            $this->database->close();
+    }
+    public function initConfigs(): void{
 	    $this->saveDefaultConfig();
 	    $this->saveResource('commands.yml');
     }
