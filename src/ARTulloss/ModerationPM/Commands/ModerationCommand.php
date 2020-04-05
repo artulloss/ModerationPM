@@ -52,7 +52,6 @@ abstract class ModerationCommand extends BaseCommand implements CommandConstants
      * @return Player|null
      */
     public function resolveOnlinePlayer(CommandSender $sender, string $name, bool $silent = false): ?Player{
-        echo "\nRESOLVE_ONLINE_PLAYER\n";
         $player = Utilities::getPlayer($name);
         if ($player === null && !$silent)
             $sender->sendMessage(self::PLAYER_OFFLINE);
