@@ -15,4 +15,6 @@ projects:
         version: ^0.3.1
       - src: CortexPE/DiscordWebhookAPI/DiscordWebhookAPI
         version: ^1.0.1
+    lint:
+      phpstan: false
 ...
