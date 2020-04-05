@@ -113,5 +113,6 @@ List:
   Command: # unban player etc
     "un{type} {player}"
 Staff Chat:
+  Enabled: true
   Format: "§9[Staff Chat] {player} » {msg}"
   Inverse Character: "!"

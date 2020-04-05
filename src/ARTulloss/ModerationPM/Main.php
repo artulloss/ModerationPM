@@ -86,7 +86,6 @@ class Main extends PluginBase{
             $this->database->close();
     }
     public function initConfigs(): void{
-	    $this->saveDefaultConfig();
 	    $this->saveResource('commands.yml');
     }
     /**
@@ -119,8 +118,7 @@ class Main extends PluginBase{
                 new ListPunishmentsCommand($this, Punishment::TYPE_IP_BAN, 'ipbanlist', 'List IP banned players'),
                 new ListPunishmentsCommand($this, Punishment::TYPE_MUTE, 'mutelist', 'List muted players'),
                 new ListPunishmentsCommand($this, Punishment::TYPE_FREEZE, 'freezelist', 'List frozen players'),
-                new TouchPunish($this, 'touchpunish', 'Tap to punish players!', ['tpunish']),
-                new StaffChatCommand($this, 'staffchat', 'Staff only chat!', ['sc'])
+                new TouchPunish($this, 'touchpunish', 'Tap to punish players!', ['tpunish'])
             ];
             /**
              * @var BaseCommand[] $commands
@@ -130,7 +128,8 @@ class Main extends PluginBase{
                     $map->unregister($oldCmd);
                 $map->register($this->getName(), $command);
             }
-        }
+        } else
+            $this->getLogger()->error('Something went wrong in registering the command config...');
     }
     public function registerDatabase(): void{
 	    $config = $this->getConfig();
@@ -154,8 +153,11 @@ class Main extends PluginBase{
         $this->getScheduler()->scheduleDelayedRepeatingTask($task, 1200 * $minutes, 1200 * $minutes);
     }
     public function registerStaffChat(): void{
-	    $this->staffChat = new StaffChat($this->commandConfig->getNested('Staff Chat.Format'));
-	    $this->staffChatToggled = new BoolContainer($this);
+	    if($this->commandConfig->getNested('Staff Chat.Enabled')) {
+            $this->staffChat = new StaffChat($this->commandConfig->getNested('Staff Chat.Format'));
+            $this->staffChatToggled = new BoolContainer($this);
+            $this->getServer()->getCommandMap()->register($this->getName(), new StaffChatCommand($this, 'staffchat', 'Staff only chat!', ['sc']));
+	    }
     }
     /**
      * @return Config

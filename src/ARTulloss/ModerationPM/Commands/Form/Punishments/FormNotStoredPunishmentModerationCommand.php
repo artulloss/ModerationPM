@@ -20,7 +20,7 @@ use dktapps\pmforms\element\Dropdown;
 use pocketmine\command\CommandSender;
 use pocketmine\Player;
 
-abstract class FormNotStoredNotStoredPunishmentModerationCommand extends FormModerationCommandOnline implements PunishmentCommand{
+abstract class FormNotStoredPunishmentModerationCommand extends FormModerationCommandOnline implements PunishmentCommand{
 
     use ReasonsTrait;
 

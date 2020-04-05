@@ -19,11 +19,10 @@ use function strtolower;
 
 /**
  * Class FormModerationCommand
- * For moderating players that are offline or stored in data
+ * For moderating players that are online + offline or stored in data
  * @package ARTulloss\ModerationPM\Commands\Form
  */
 abstract class FormModerationCommand extends ModerationCommand{
-
     /**
      * Splits the command into the run as player and run as console
      * @param CommandSender $sender
@@ -33,6 +32,10 @@ abstract class FormModerationCommand extends ModerationCommand{
     final public function onRun(CommandSender $sender, string $aliasUsed, array $args): void{
         if(isset($args['name'])) {
             $name = $args['name'];
+            $player = $this->resolveOnlinePlayer($sender, $args['name'], true);
+            if($player !== null) {
+                $name = $player->getName();
+            }
             $data = $this->plugin->getPlayerData()->get($name);
             if($data !== null) {
                 $name = $data->getName();
@@ -56,10 +59,10 @@ abstract class FormModerationCommand extends ModerationCommand{
                                 $this->sendUsage();
                                 return;
                             }
-                        } else
-                            $sender->sendMessage(TextFormat::RED . 'Player does not exist!');
+                        }
                     }
-                }
+                } else
+                    $sender->sendMessage(TextFormat::RED . 'Player does not exist!');
             });
         } else
             $this->sendUsage();

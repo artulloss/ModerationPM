@@ -15,7 +15,7 @@ use pocketmine\command\CommandSender;
 use pocketmine\Player;
 use pocketmine\utils\TextFormat;
 
-class KickCommand extends FormNotStoredNotStoredPunishmentModerationCommand{
+class KickCommand extends FormNotStoredPunishmentModerationCommand {
 
     protected const TITLE = 'Kick {player}';
     public const TYPE = Punishment::TYPE_KICK;

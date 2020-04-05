@@ -44,7 +44,6 @@ abstract class FormModerationCommandOnline extends ModerationCommand{
      * @param array $args
      */
     abstract public function runAsPlayer(Player $sender, Player $player, array $args): void;
-
     /**
      * @param CommandSender $sender
      * @param Player $player

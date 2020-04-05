@@ -53,9 +53,11 @@ class DiscordLogger
         $dateTime = new DateTime();
         $dateTime->setTimestamp($until);
         $length = $dateTime->diff(new DateTime());
+        $lengthFormat = $until !== 0 ? $length->format('%Y-%m-%d %H:%i:%s') : 'Forever';
+        $dateTimeFormat = $until !== 0 ? $dateTime->format('Y-m-d H:i:s') : 'Forever';
         $embed->setDescription(str_replace(
             ['{player}', '{staff}', '{reason}', '{length}', '{until}'], 
-            [$this->getXblLinkMarkdown($player), $this->getXblLinkMarkdown($staff), $reason, $length->format('%Y-%m-%d %H:%i:%s'), $dateTime->format('Y-m-d H:i:s')],
+            [$this->getXblLinkMarkdown($player), $this->getXblLinkMarkdown($staff), $reason, $lengthFormat, $dateTimeFormat],
             implode(TextFormat::EOL, $data['Content-Punish'])));
         $embed->setTitle(str_replace('{type}', $this->plugin->getProvider()->typeToString($type), $data['Title']));
         $embed->setFooter($data['Footer'], $data['Image']);

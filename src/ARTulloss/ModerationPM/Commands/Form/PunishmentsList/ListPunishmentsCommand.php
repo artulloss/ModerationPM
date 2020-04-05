@@ -80,7 +80,8 @@ class ListPunishmentsCommand extends ModerationCommand implements CommandConstan
                 foreach ($punishments as $punishment) {
                     $sender->sendMessage($this->replaceStrings($format, $type, $punishment->getPlayerName(), $punishment->getStaffName(), $punishment->getReason()));
                 }
-            }
+            } else
+                $sender->sendMessage(TextFormat::RED . 'No one is ' . $this->provider->resolveType($this->type, 'banned', 'IP banned', 'muted', 'frozen'));
         });
     }
     /**

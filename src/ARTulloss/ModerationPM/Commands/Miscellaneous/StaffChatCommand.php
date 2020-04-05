@@ -14,6 +14,7 @@ use ARTulloss\ModerationPM\Commands\CommandConstants;
 use ARTulloss\ModerationPM\Commands\ModerationCommand;
 use pocketmine\command\CommandSender;
 use pocketmine\Player;
+use pocketmine\utils\TextFormat;
 
 class StaffChatCommand extends ModerationCommand {
 
@@ -27,8 +28,9 @@ class StaffChatCommand extends ModerationCommand {
 
                 $staffChat = $this->plugin->getStaffChat();
 
-                if(!$staffChat->isInStaffChat($sender))
+                if(!$staffChat->isInStaffChat($sender)) {
                     $staffChat->addToStaffChat($sender);
+                }
 
                 if(isset($args['message'])) {
                     $staffChat->sendMessage($sender, $args['message']);
@@ -39,9 +41,11 @@ class StaffChatCommand extends ModerationCommand {
 
                 if($staffChatToggled->checkState($sender)) {
                     $staffChatToggled->reverseAction($sender);
+                    $sender->sendMessage(TextFormat::GREEN . 'Staff chat disabled!');
                     return;
                 }
                 $staffChatToggled->action($sender);
+                $sender->sendMessage(TextFormat::GREEN . 'Staff chat enabled!');
             }
         } elseif(isset($args['message'])) {
             $staffChat = $this->plugin->getStaffChat();

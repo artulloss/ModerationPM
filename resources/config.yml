@@ -1,6 +1,6 @@
 ---
 database:
-  # The database type. "sqlite", "mysql" and "json" (TODO) are supported.
+  # The database type. "mysql" is supported
   type: mysql
 
   # Edit these settings only if you choose "sqlite".

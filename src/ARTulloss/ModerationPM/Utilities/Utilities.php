@@ -46,7 +46,6 @@ class Utilities{
                 }
             }
         }
-
         return $found;
     }
     /**
