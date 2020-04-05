@@ -159,26 +159,28 @@ class Listener implements PMListener{
 
         $msg = $event->getMessage();
 
-        $toggledStaffChat = $this->plugin->getStaffChatToggled();
-        $staffChat = $this->plugin->getStaffChat();
+        if($this->plugin->getCommandConfig()->getNested('Staff Chat.Enabled')) {
+            $toggledStaffChat = $this->plugin->getStaffChatToggled();
+            $staffChat = $this->plugin->getStaffChat();
 
-        if($player->hasPermission('moderation.staff_chat'))
-            $staffChat->addToStaffChat($player);
-        else
-            $staffChat->removeFromStaffChat($player);
+            if($player->hasPermission('moderation.staff_chat'))
+                $staffChat->addToStaffChat($player);
+            else
+                $staffChat->removeFromStaffChat($player);
 
-        if($staffChat->isInStaffChat($player)) {
-            if($msg[0] === $this->staffChatChar) {
-                $msg = substr($msg, 1);
-                if($toggledStaffChat->checkState($player))
-                    $event->setMessage($msg);
-                else {
+            if($staffChat->isInStaffChat($player)) {
+                if($msg[0] === $this->staffChatChar) {
+                    $msg = substr($msg, 1);
+                    if($toggledStaffChat->checkState($player))
+                        $event->setMessage($msg);
+                    else {
+                        $staffChat->sendMessage($player, $msg);
+                        $event->setCancelled();
+                    }
+                } elseif($toggledStaffChat->checkState($player)) {
                     $staffChat->sendMessage($player, $msg);
                     $event->setCancelled();
                 }
-            } elseif($toggledStaffChat->checkState($player)) {
-                $staffChat->sendMessage($player, $msg);
-                $event->setCancelled();
             }
         }
     }
