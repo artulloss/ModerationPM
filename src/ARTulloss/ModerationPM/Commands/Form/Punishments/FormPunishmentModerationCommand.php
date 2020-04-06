@@ -69,7 +69,6 @@ abstract class FormPunishmentModerationCommand extends FormModerationCommand imp
      * @param array $args
      */
     public function runAsPlayer(Player $sender, array $dataArray, array $args): void{
-        echo "RUN AS PLAYER CALLED";
         /** @var PlayerData $data */
         $data = array_values($dataArray)[0];
         $form = new CustomForm(strtr(static::TITLE, ['{player}' => $data->getName()]), [
