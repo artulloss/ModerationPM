@@ -58,7 +58,6 @@ abstract class Provider{
      * @param callable|null $onComplete
      */
     abstract public function asyncRegisterPlayer(string $name, string $xuid, string $deviceID, string $ip, callable $onComplete = null): void;
-
     /**
      * @param string $name
      * @param string|null $xuid

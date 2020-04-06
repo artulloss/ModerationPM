@@ -17,6 +17,7 @@ use pocketmine\command\CommandSender;
 use pocketmine\Player;
 use function str_replace;
 use function strtolower;
+use function var_dump;
 
 abstract class ReversePunishmentCommand extends ModerationCommand{
     protected const TYPE = 0;
@@ -37,40 +38,42 @@ abstract class ReversePunishmentCommand extends ModerationCommand{
      */
     public function onRun(CommandSender $sender, string $aliasUsed, array $args): void{
         if($this->testPermission($sender) && isset($args['name'])) {
-            $data = $this->plugin->getPlayerData()->get($args['name']);
-            $xuid = null;
-            $device_id = null;
-            if($data !== null) {
-                $xuid = $data->getXUID();
-                $device_id = $data->getDeviceID();
-            }
-            $this->passPlayerData($args['name'], $xuid, $device_id, true, function (?array $dataArray) use ($sender, $args): void{
-                if($dataArray !== null) {
-                    $lowerCaseName = strtolower($args['name']);
-                    /** @var PlayerData $data */
-                    foreach ($dataArray as $data) {
-                        $name = $data->getName();
-                        $id = $data->getID();
-                        $this->provider->asyncRemovePunishment($id, static::TYPE, function (int $rows) use ($sender, $lowerCaseName, $name): void{
-                            $player = $sender->getServer()->getPlayer($name); // Unpunish the player if they're or alts are online
-                            if($player !== null)
-                                $this->onlineUnpunish($player, str_replace('{player}', $player->getName(), static::MESSAGE_SUCCESS_ONLINE));
-                            if($rows === 0) {
-                                $sender->sendMessage(str_replace('{player}', $name, static::MESSAGE_FAIL));
-                                return;
+            $this->passPlayerData($args['name'], null, null, true, function (?array $dataArray) use($sender, $args): void{
+                if($dataArray === null)
+                    return;
+                /** @var PlayerData $playerData */
+                foreach ($dataArray as $playerData) {
+                    $xuid = $playerData->getXUID();
+                    $device_id = $playerData->getDeviceID();
+                    $this->passPlayerData($args['name'], $xuid, $device_id, true, function (?array $dataArray) use ($sender, $args): void{
+                        if($dataArray !== null) {
+                            $lowerCaseName = strtolower($args['name']);
+                            /** @var PlayerData $data */
+                            foreach ($dataArray as $data) {
+                                $name = $data->getName();
+                                $id = $data->getID();
+                                $this->provider->asyncRemovePunishment($id, static::TYPE, function (int $rows) use ($sender, $lowerCaseName, $name): void{
+                                    $player = $sender->getServer()->getPlayer($name); // Unpunish the player if they're or alts are online
+                                    if($player !== null)
+                                        $this->onlineUnpunish($player, str_replace('{player}', $player->getName(), static::MESSAGE_SUCCESS_ONLINE));
+                                    if($rows === 0) {
+                                        $sender->sendMessage(str_replace('{player}', $name, static::MESSAGE_FAIL));
+                                        return;
+                                    }
+                                    $sender->sendMessage(str_replace('{player}', $name, static::MESSAGE_SUCCESS));
+                                    $sender->getServer()->broadcastMessage(str_replace(['{player}', '{staff}'], [$name, $sender->getName()], static::MESSAGE_BROADCAST));
+                                    $content = $this->plugin->getCommandConfig()->getAll()['Discord']['Content-Unpunish'];
+                                    $logger = $this->plugin->getDiscordLogger();
+                                    if($logger !== null) {
+                                        foreach ($content as $key => $line)
+                                            $content[$key] = str_replace(['{player}', '{staff}'], [$logger->getXblLinkMarkdown($name), $logger->getXblLinkMarkdown($sender->getName())], $line);
+                                        $logger->logGeneric('Un' . $this->provider->typeToString(static::TYPE, false),
+                                            $content, static::COLOR);
+                                    }
+                                });
                             }
-                            $sender->sendMessage(str_replace('{player}', $name, static::MESSAGE_SUCCESS));
-                            $sender->getServer()->broadcastMessage(str_replace(['{player}', '{staff}'], [$name, $sender->getName()], static::MESSAGE_BROADCAST));
-                            $content = $this->plugin->getCommandConfig()->getAll()['Discord']['Content-Unpunish'];
-                            $logger = $this->plugin->getDiscordLogger();
-                            if($logger !== null) {
-                                foreach ($content as $key => $line)
-                                    $content[$key] = str_replace(['{player}', '{staff}'], [$logger->getXblLinkMarkdown($name), $logger->getXblLinkMarkdown($sender->getName())], $line);
-                                $logger->logGeneric('Un' . $this->provider->typeToString(static::TYPE, false),
-                                    $content, static::COLOR);
-                            }
-                        });
-                    }
+                        }
+                    });
                 }
             });
         }
