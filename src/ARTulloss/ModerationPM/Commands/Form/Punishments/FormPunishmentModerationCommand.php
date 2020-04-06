@@ -21,6 +21,7 @@ use ARTulloss\ModerationPM\Main;
 use dktapps\pmforms\CustomForm;
 use dktapps\pmforms\CustomFormResponse;
 use dktapps\pmforms\element\Dropdown;
+use dktapps\pmforms\element\Input;
 use dktapps\pmforms\element\StepSlider;
 use pocketmine\command\CommandSender;
 use pocketmine\Player;
@@ -68,10 +69,12 @@ abstract class FormPunishmentModerationCommand extends FormModerationCommand imp
     public function runAsPlayer(Player $sender, PlayerData $data, array $args): void{
         $form = new CustomForm(strtr(static::TITLE, ['{player}' => $data->getName()]), [
             new StepSlider('length', 'Length', $this->lengths, 0),
-            new Dropdown('reason', 'Reason', $this->reasons)
+            new Dropdown('reason', 'Reason', $this->reasons),
+            new Input('custom_reason', 'Custom Reason', 'Reason')
         ], function (Player $sender, CustomFormResponse $response) use ($data): void{
             $response = $response->getAll();
-            $this->callback($sender, $data, $this->lengths[$response['length']], $this->reasons[$response['reason']]); // Forward this so the callback can be overwritten
+            $reason = $response['custom_reason'] === '' ? $this->reasons[$response['reason']] : $response['custom_reason'];
+            $this->callback($sender, $data, $this->lengths[$response['length']], $reason); // Forward this so the callback can be overwritten
         });
         $sender->sendForm($form);
     }
