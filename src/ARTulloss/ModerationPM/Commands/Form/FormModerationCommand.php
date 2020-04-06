@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace ARTulloss\ModerationPM\Commands\Form;
 
+use function array_values;
 use ARTulloss\ModerationPM\Commands\ModerationCommand;
 use ARTulloss\ModerationPM\Database\Container\PlayerData;
 use pocketmine\command\CommandSender;
@@ -44,21 +45,22 @@ abstract class FormModerationCommand extends ModerationCommand{
                 if($playerDataArray !== null) {
                     $lowerCaseName = strtolower($name);
                     /** @var PlayerData $playerData */
-                    foreach ($playerDataArray as $playerData) {
-                        if(strtolower($playerData->getName()) === $lowerCaseName) {
-                            if ($sender instanceof ConsoleCommandSender || (isset($args['length']) && isset($args['reason']) && $args['reason'] !== '' && ($good = true))) {
-                                if(isset($good) || (isset($args['length']) && isset($args['reason'])))
-                                    $this->runAsConsole($sender, $playerData, $args);
-                                else {
-                                    $this->sendUsage();
-                                    return;
-                                }
-                            } elseif ($sender instanceof Player) {
-                                $this->runAsPlayer($sender, $playerData, $args);
+                    $playerData = array_values($playerDataArray)[0];
+                    if(strtolower($playerData->getName()) === $lowerCaseName) {
+                        if ($sender instanceof ConsoleCommandSender || (isset($args['length']) && isset($args['reason']) && $args['reason'] !== '' && ($good = true))) {
+                            if(isset($good) || (isset($args['length']) && isset($args['reason']))) {
+                                $this->runAsConsole($sender, $playerDataArray, $args);
+                                return;
                             } else {
                                 $this->sendUsage();
                                 return;
                             }
+                        } elseif ($sender instanceof Player) {
+                            $this->runAsPlayer($sender, $playerDataArray, $args);
+                            return;
+                        } else {
+                            $this->sendUsage();
+                            return;
                         }
                     }
                 } else
@@ -69,14 +71,14 @@ abstract class FormModerationCommand extends ModerationCommand{
     }
     /**
      * @param Player $sender
-     * @param PlayerData $data
+     * @param array $data
      * @param array $args
      */
-    abstract public function runAsPlayer(Player $sender, PlayerData $data, array $args): void;
+    abstract public function runAsPlayer(Player $sender, array $data, array $args): void;
     /**
      * @param CommandSender $sender
-     * @param PlayerData $data
+     * @param array $data
      * @param array $args
      */
-    abstract public function runAsConsole(CommandSender $sender, PlayerData $data, array $args): void;
+    abstract public function runAsConsole(CommandSender $sender, array $data, array $args): void;
 }

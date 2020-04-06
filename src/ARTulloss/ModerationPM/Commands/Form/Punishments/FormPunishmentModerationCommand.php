@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace ARTulloss\ModerationPM\Commands\Form\Punishments;
 
+use function array_values;
 use ARTulloss\ModerationPM\Commands\Arguments\DateTimeArgument;
 use ARTulloss\ModerationPM\Commands\Arguments\ForeverArgument;
 use ARTulloss\ModerationPM\Commands\Arguments\MessageArgument;
@@ -64,28 +65,31 @@ abstract class FormPunishmentModerationCommand extends FormModerationCommand imp
     }
     /**
      * @param Player $sender
-     * @param PlayerData $data
+     * @param array $dataArray
      * @param array $args
      */
-    public function runAsPlayer(Player $sender, PlayerData $data, array $args): void{
+    public function runAsPlayer(Player $sender, array $dataArray, array $args): void{
+        echo "RUN AS PLAYER CALLED";
+        /** @var PlayerData $data */
+        $data = array_values($dataArray)[0];
         $form = new CustomForm(strtr(static::TITLE, ['{player}' => $data->getName()]), [
             new StepSlider('length', 'Length', $this->lengths, 0),
             new Dropdown('reason', 'Reason', $this->reasons),
             new Input('custom_reason', 'Custom Reason', 'Reason')
-        ], function (Player $sender, CustomFormResponse $response) use ($data): void{
+        ], function (Player $sender, CustomFormResponse $response) use ($dataArray): void{
             $response = $response->getAll();
             $reason = $response['custom_reason'] === '' ? $this->reasons[$response['reason']] : $response['custom_reason'];
-            $this->callback($sender, $data, $this->lengths[$response['length']], $reason); // Forward this so the callback can be overwritten
+            $this->callback($sender, $dataArray, $this->lengths[$response['length']], $reason); // Forward this so the callback can be overwritten
         });
         $sender->sendForm($form);
     }
     /**
      * @param CommandSender $sender
-     * @param PlayerData $data
+     * @param array $data
      * @param array $args
      * @throws Exception
      */
-    public function runAsConsole(CommandSender $sender, PlayerData $data, array $args): void{
+    public function runAsConsole(CommandSender $sender, array $data, array $args): void{
         if(!($args['length'] === '' || $args['reason'] === ''))
             $this->callback($sender, $data, $args['length'], $args['reason']);
         else
@@ -93,25 +97,29 @@ abstract class FormPunishmentModerationCommand extends FormModerationCommand imp
     }
     /**
      * @param CommandSender $sender
-     * @param PlayerData $data
+     * @param array $data
      * @param string $until
      * @param string $reason
      * @throws Exception
      */
-    public function callback(CommandSender $sender, PlayerData $data, string $until, string $reason): void{
+    public function callback(CommandSender $sender, $data, string $until, string $reason): void{
         if(strtolower($until) === 'forever') {
             $until = Punishment::FOREVER;
         } else
             $until = (new DateTime("now + $until"))->getTimestamp();
-        $this->provider->asyncPunishPlayer($data->getID(), static::TYPE, $sender->getName(), $reason, $until);
-        $player = $sender->getServer()->getPlayerExact($data->getName());
-        if($player !== null)
+        foreach ($data as $playerData) {
+            // Punish each player data matching the players name
+            $this->provider->asyncPunishPlayer($playerData->getID(), static::TYPE, $sender->getName(), $reason, $until);
+            $player = $sender->getServer()->getPlayerExact($playerData->getName());
+        }
+        if(isset($player) && $player !== null)
             $this->onlinePunish($player, $this->plugin->resolvePunishmentMessage(static::TYPE, $reason, $until));
-        $action = $this->provider->typeToString(static::TYPE);
-        $sender->getServer()->broadcastMessage(str_replace(['{player}', '{staff}'], [$data->getName(), $sender->getName()], static::MESSAGE_BROADCAST));
-        $logger = $this->plugin->getDiscordLogger();
-        if($logger !== null)
-            $logger->logPunish($data->getName(), $sender->getName(), static::TYPE, $reason, $until, static::COLOR);
+        if(isset($playerData)) {
+            $sender->getServer()->broadcastMessage(str_replace(['{player}', '{staff}'], [$playerData->getName(), $sender->getName()], static::MESSAGE_BROADCAST));
+            $logger = $this->plugin->getDiscordLogger();
+            if ($logger !== null)
+                $logger->logPunish($playerData->getName(), $sender->getName(), static::TYPE, $reason, $until, static::COLOR);
+        }
     }
     /**
      * @param Player $player

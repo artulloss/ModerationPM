@@ -13,6 +13,7 @@ use ARTulloss\ModerationPM\Commands\CommandConstants;
 use ARTulloss\ModerationPM\Commands\ModerationCommand;
 use ARTulloss\ModerationPM\Database\Container\Punishment;
 use ARTulloss\ModerationPM\Main;
+use function count;
 use dktapps\pmforms\MenuForm;
 use dktapps\pmforms\MenuOption;
 use pocketmine\command\CommandSender;
@@ -25,6 +26,8 @@ use function implode;
 class ListPunishmentsCommand extends ModerationCommand implements CommandConstants{
     /** @var int $type */
     private $type;
+    /* Max amount of buttons on the form before switching to text */
+    public const MAX_FORM = 100;
     /**
      * ListPunishmentsCommand constructor.
      * @param Main $main
@@ -47,6 +50,10 @@ class ListPunishmentsCommand extends ModerationCommand implements CommandConstan
                 $commandConfig = $this->plugin->getCommandConfig();
                 $this->asyncGetPunishments(function (?array $punishments) use ($sender, $commandConfig): void{
                     if($punishments !== null) {
+                        if(count($punishments) > self::MAX_FORM) {
+                            $this->runAsConsole($sender);
+                            return;
+                        }
                         $format = $commandConfig->getNested('List.Format');
                         /** @var Punishment $punishment */
                         foreach ($punishments as $punishment) {
