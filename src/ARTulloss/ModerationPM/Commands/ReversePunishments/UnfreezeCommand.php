@@ -19,6 +19,7 @@ class UnfreezeCommand extends ReversePunishmentCommand{
     protected const MESSAGE_SUCCESS = TextFormat::GREEN . 'Successfully thawed {player}!';
     protected const MESSAGE_SUCCESS_ONLINE = TextFormat::GREEN . 'You were thawed!';
     protected const MESSAGE_FAIL = TextFormat::RED . 'Player was not frozen!';
+    protected const MESSAGE_BROADCAST = TextFormat::GREEN . '{player} was thawed by {staff}';
 
     public function onlineUnpunish(Player $player, string $message): void{
         $this->plugin->getFrozen()->reverseAction($player);

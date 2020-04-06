@@ -20,6 +20,7 @@ class BanCommand extends FormPunishmentModerationCommand{
     public const TYPE = Punishment::TYPE_BAN;
     public const COLOR = Colors::RED;
     public const MESSAGE_SUCCESS = TextFormat::GREEN . 'Successfully banned {player}!';
+    public const MESSAGE_BROADCAST = TextFormat::GREEN . '{player} was banned by {staff}';
 
     public function onlinePunish(Player $player, string $message): void{
         $player->kick($message, false);

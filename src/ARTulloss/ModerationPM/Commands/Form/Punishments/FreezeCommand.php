@@ -20,6 +20,7 @@ class FreezeCommand extends FormPunishmentModerationCommand{
     public const TYPE = Punishment::TYPE_FREEZE;
     public const COLOR = Colors::BLUE;
     public const MESSAGE_SUCCESS = TextFormat::GREEN . 'Successfully froze {player}!';
+    public const MESSAGE_BROADCAST = TextFormat::GREEN . '{player} was frozen by {staff}';
 
     public function onlinePunish(Player $player, string $message): void{
         $player->sendMessage($message);

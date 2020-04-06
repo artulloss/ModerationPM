@@ -17,5 +17,6 @@ class UnBanIPCommand extends ReversePunishmentCommand{
     protected const TYPE = Punishment::TYPE_IP_BAN;
     protected const MESSAGE_SUCCESS = TextFormat::GREEN . "Successfully unbanned {player}'s IP!";
     protected const MESSAGE_FAIL = TextFormat::RED . "Player's IP was not banned!";
+    protected const MESSAGE_BROADCAST = TextFormat::GREEN . "{player}'s IP was unbanned by {staff}";
 
 }

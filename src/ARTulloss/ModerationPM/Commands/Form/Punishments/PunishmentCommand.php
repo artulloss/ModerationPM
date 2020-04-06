@@ -16,4 +16,5 @@ interface PunishmentCommand{
     public const TYPE = Punishment::TYPE_BAN;
     public const COLOR = Colors::RED;
     public const MESSAGE_SUCCESS = TextFormat::GREEN . 'Success!';
+    public const MESSAGE_BROADCAST = TextFormat::GREEN . '{player} was {action} by {staff}';
 }

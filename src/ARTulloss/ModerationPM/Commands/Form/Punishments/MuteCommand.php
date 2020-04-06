@@ -20,6 +20,7 @@ class MuteCommand extends FormPunishmentModerationCommand{
     public const TYPE = Punishment::TYPE_MUTE;
     public const COLOR = Colors::GRAY;
     public const MESSAGE_SUCCESS = TextFormat::GREEN . 'Successfully muted {player}!';
+    public const MESSAGE_BROADCAST = TextFormat::GREEN . '{player} was muted by {staff}';
 
     /**
      * @param Player $player

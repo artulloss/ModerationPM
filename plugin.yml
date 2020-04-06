@@ -12,7 +12,7 @@ permissions:
       moderation.ban:
         default: "op"
         description: "Allows to ban players"
-      moderation.ban_ip:
+      moderation.ip ban:
         default: "op"
         description: "Allows to ban players IP addresses"
       moderation.mute:
@@ -27,7 +27,7 @@ permissions:
       moderation.unban:
         default: "op"
         description: "Allows to unban players"
-      moderation.unban_ip:
+      moderation.unip ban:
         default: "op"
         description: "Allows to unban players IP addresses"
       moderation.unmute:

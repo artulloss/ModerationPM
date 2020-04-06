@@ -27,6 +27,7 @@ use pocketmine\command\CommandSender;
 use pocketmine\Player;
 use Exception;
 use DateTime;
+use pocketmine\utils\TextFormat;
 use function str_replace;
 use function strtolower;
 use function strtr;
@@ -106,7 +107,8 @@ abstract class FormPunishmentModerationCommand extends FormModerationCommand imp
         $player = $sender->getServer()->getPlayerExact($data->getName());
         if($player !== null)
             $this->onlinePunish($player, $this->plugin->resolvePunishmentMessage(static::TYPE, $reason, $until));
-        $sender->sendMessage(str_replace('{player}', $data->getName(), static::MESSAGE_SUCCESS));
+        $action = $this->provider->typeToString(static::TYPE);
+        $sender->getServer()->broadcastMessage(str_replace(['{player}', '{staff}'], [$data->getName(), $sender->getName()], static::MESSAGE_BROADCAST));
         $logger = $this->plugin->getDiscordLogger();
         if($logger !== null)
             $logger->logPunish($data->getName(), $sender->getName(), static::TYPE, $reason, $until, static::COLOR);

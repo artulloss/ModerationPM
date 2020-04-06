@@ -23,6 +23,7 @@ abstract class ReversePunishmentCommand extends ModerationCommand{
     protected const MESSAGE_SUCCESS = 'Success';
     protected const MESSAGE_SUCCESS_ONLINE = 'Success';
     protected const MESSAGE_FAIL = 'Fail';
+    protected const MESSAGE_BROADCAST = '{player} was {action} by {staff}';
     protected const COLOR = Colors::GREEN;
 
     public function __construct(Main $main, string $name, string $description = "", array $aliases = []) {
@@ -59,6 +60,7 @@ abstract class ReversePunishmentCommand extends ModerationCommand{
                                 return;
                             }
                             $sender->sendMessage(str_replace('{player}', $name, static::MESSAGE_SUCCESS));
+                            $sender->getServer()->broadcastMessage(str_replace(['{player}', '{staff}'], [$name, $sender->getName()], static::MESSAGE_BROADCAST));
                             $content = $this->plugin->getCommandConfig()->getAll()['Discord']['Content-Unpunish'];
                             $logger = $this->plugin->getDiscordLogger();
                             if($logger !== null) {

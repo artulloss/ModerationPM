@@ -20,4 +20,5 @@ class BanIPCommand extends BanCommand
     public const TYPE = Punishment::TYPE_IP_BAN;
     public const COLOR = Colors::RED;
     public const MESSAGE_SUCCESS = TextFormat::GREEN . 'Successfully IP banned {player}!';
+    public const MESSAGE_BROADCAST = TextFormat::GREEN . '{player} was IP banned by {staff}';
 }
