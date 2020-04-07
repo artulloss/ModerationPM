@@ -14,6 +14,7 @@ use ARTulloss\ModerationPM\Database\Container\PlayerData;
 use ARTulloss\ModerationPM\Discord\Colors;
 use ARTulloss\ModerationPM\Main;
 use pocketmine\command\CommandSender;
+use pocketmine\command\utils\InvalidCommandSyntaxException;
 use pocketmine\Player;
 use function str_replace;
 use function strtolower;
@@ -37,7 +38,9 @@ abstract class ReversePunishmentCommand extends ModerationCommand{
      * @param array $args
      */
     public function onRun(CommandSender $sender, string $aliasUsed, array $args): void{
-        if($this->testPermission($sender) && isset($args['name'])) {
+        if($this->testPermission($sender)) {
+            if(!isset($args['name']))
+                throw new InvalidCommandSyntaxException();
             $this->passPlayerData($args['name'], null, null, true, function (?array $dataArray) use($sender, $args): void{
                 if($dataArray === null)
                     return;
