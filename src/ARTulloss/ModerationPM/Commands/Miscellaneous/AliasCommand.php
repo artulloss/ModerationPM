@@ -33,25 +33,33 @@ class AliasCommand extends ModerationCommand {
         }
         $this->passPlayerData($args['name'], $xuid, null, true, function (?array $playerDataArray) use ($sender, $args): void{
             if($playerDataArray !== null) {
+                $lastValue = end($playerDataArray);
                 /** @var PlayerData $playerData */
                 foreach ($playerDataArray as $playerData) {
-                    $this->passPlayerData($playerData->getName(), $playerData->getXUID(), $playerData->getDeviceID(), true, function (?array $playerDataArray) use ($sender, $args): void{
-                        /** @var PlayerData $playerData */
-                        foreach ($playerDataArray as $playerData) {
-                            $name = $playerData->getName();
-                            if(!isset($this->aliases[$name])) {
-                                $this->aliases[$name] = 1;
-                            } else
-                                $this->aliases[$name]++;
+                    $final = false;
+                    if($playerData === $lastValue)
+                        $final = true;
+                    $this->passPlayerData($playerData->getName(), $playerData->getXUID(), $playerData->getDeviceID(), true, function (?array $playerDataArray) use ($sender, $args, $final): void{
+                        if($playerDataArray !== null) {
+                            /** @var PlayerData $playerData */
+                            foreach ($playerDataArray as $playerData) {
+                                $name = $playerData->getName();
+                                if(!isset($this->aliases[$name])) {
+                                    $this->aliases[$name] = 1;
+                                } else
+                                    $this->aliases[$name]++;
+                            }
+                        }
+                        if($final) {
+                            $sender->sendMessage(str_replace('{player}', $args['name'], self::MESSAGE_INITIAL));
+                            foreach ($this->aliases as $name => $matches) {
+                                if(strtolower($name) !== strtolower($args['name']))
+                                    $sender->sendMessage(str_replace(['{player}', '{matches}'], [$name, $matches], self::MESSAGE_MATCHES));
+                            }
+                            $this->aliases = [];
                         }
                     });
                 }
-                $sender->sendMessage(str_replace('{player}', $args['name'], self::MESSAGE_INITIAL));
-                foreach ($this->aliases as $name => $matches) {
-                    if(strtolower($name) !== strtolower($args['name']))
-                        $sender->sendMessage(str_replace(['{player}', '{matches}'], [$name, $matches], self::MESSAGE_MATCHES));
-                }
-                $this->aliases = [];
             }
         });
     }
