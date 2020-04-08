@@ -114,6 +114,9 @@ abstract class Provider{
                 break;
             case Punishment::TYPE_KICK:
                 $return = 'kick';
+                break;
+            case Punishment::TYPE_REPORT:
+                $return = 'report';
         }
         if(isset($return))
             return $caps ? ucwords($return) : $return;

@@ -19,6 +19,7 @@ class Punishment extends DataContainer{
     public const TYPE_MUTE = 3;
     public const TYPE_FREEZE = 4;
     public const TYPE_KICK = 5;
+    public const TYPE_REPORT = 6;
 
     public const FOREVER = 0;
 

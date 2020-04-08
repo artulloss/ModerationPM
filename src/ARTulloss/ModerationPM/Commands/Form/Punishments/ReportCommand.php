@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace ARTulloss\ModerationPM\Commands\Form\Punishments;
 
+use ARTulloss\ModerationPM\Database\Container\Punishment;
 use ARTulloss\ModerationPM\Discord\Colors;
 use ARTulloss\ModerationPM\Main;
 use pocketmine\command\CommandSender;
@@ -18,6 +19,7 @@ use function str_replace;
 
 class ReportCommand extends FormNotStoredPunishmentModerationCommand {
     protected const TITLE = 'Report {player}';
+    public const TYPE = Punishment::TYPE_REPORT;
     public const COLOR = Colors::ORANGE;
     public const MESSAGE_SUCCESS = TextFormat::GREEN . 'Successfully reported {player}!';
     public const MESSAGE_BROADCAST = TextFormat::GREEN . '{player} was reported by {staff}';

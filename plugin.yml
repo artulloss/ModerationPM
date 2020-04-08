@@ -24,6 +24,9 @@ permissions:
       moderation.kick:
         default: "op"
         description: "Allows to kick players"
+      moderation.report:
+        default: true
+        description: "Allows to report players"
       moderation.unban:
         default: "op"
         description: "Allows to unban players"
