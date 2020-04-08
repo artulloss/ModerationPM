@@ -38,7 +38,6 @@ abstract class FormNotStoredPunishmentModerationCommand extends FormModerationCo
         $this->setPermission(Main::PERMISSION_PREFIX . $this->provider->typeToString(static::TYPE, false));
         $this->setReasons($reasons);
     }
-
     protected function prepare(): void{
         parent::prepare();
         $this->registerArgument(1, new MessageArgument('reason'));
@@ -93,6 +92,21 @@ abstract class FormNotStoredPunishmentModerationCommand extends FormModerationCo
             foreach ($content as $key => $line)
                 $content[$key] = str_replace(['{player}', '{staff}', '{reason}'], [$logger->getXblLinkMarkdown($player->getName()), $logger->getXblLinkMarkdown($sender->getName()), $reason], $line);
             $logger->logGeneric($this->plugin->getProvider()->typeToString(static::TYPE), $content, static::COLOR);
+        }
+    }
+    /**
+     * @param CommandSender $sender
+     * @param Player $player
+     * @param string $reason
+     * @throws \Exception
+     */
+    protected function logReport(CommandSender $sender, Player $player, string $reason): void{
+        $logger = $this->plugin->getDiscordLogger();
+        if($logger !== null) {
+            $content = $this->plugin->getCommandConfig()->getNested('Discord.Content-Report');
+            foreach ($content as $key => $line)
+                $content[$key] = str_replace(['{reported}', '{player}', '{reason}'], [$logger->getXblLinkMarkdown($player->getName()), $logger->getXblLinkMarkdown($sender->getName()), $reason], $line);
+            $logger->logGeneric('Report', $content, static::COLOR, $this->plugin->getCommandConfig()->getNested('Discord.Webhook-Reports'));
         }
     }
 }

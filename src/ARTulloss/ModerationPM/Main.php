@@ -9,7 +9,9 @@ use ARTulloss\ModerationPM\Commands\Form\Punishments\BanIPCommand;
 use ARTulloss\ModerationPM\Commands\Form\Punishments\FreezeCommand;
 use ARTulloss\ModerationPM\Commands\Form\Punishments\KickCommand;
 use ARTulloss\ModerationPM\Commands\Form\Punishments\MuteCommand;
+use ARTulloss\ModerationPM\Commands\Form\Punishments\ReportCommand;
 use ARTulloss\ModerationPM\Commands\Form\PunishmentsList\ListPunishmentsCommand;
+use ARTulloss\ModerationPM\Commands\Miscellaneous\AliasCommand;
 use ARTulloss\ModerationPM\Commands\Miscellaneous\StaffChatCommand;
 use ARTulloss\ModerationPM\Commands\ReversePunishments\UnbanCommand;
 use ARTulloss\ModerationPM\Commands\ReversePunishments\UnfreezeCommand;
@@ -118,7 +120,9 @@ class Main extends PluginBase{
                 new ListPunishmentsCommand($this, Punishment::TYPE_IP_BAN, 'ipbanlist', 'List IP banned players'),
                 new ListPunishmentsCommand($this, Punishment::TYPE_MUTE, 'mutelist', 'List muted players'),
                 new ListPunishmentsCommand($this, Punishment::TYPE_FREEZE, 'freezelist', 'List frozen players'),
-                new TouchPunish($this, 'touchpunish', 'Tap to punish players!', ['tpunish'])
+                new TouchPunish($this, 'touchpunish', 'Tap to punish players!', ['tpunish']),
+                new AliasCommand($this, 'newalias', "Who's that player!"),
+                new ReportCommand($this, 'report', 'Report a player!', $config->getNested('Report.Reasons'))
             ];
             /**
              * @var BaseCommand[] $commands

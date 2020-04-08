@@ -1,6 +1,7 @@
 Discord: # Logging for commands
   Enable: false
   Webhook: ENTER WEBHOOK
+  Webhook-Reports: ENTER WEBHOOK
   Title: "{type}"
   Content-Punish:
     - "Player: {player}"
@@ -14,6 +15,10 @@ Discord: # Logging for commands
   Content-Kick:
     - "Player: {player}"
     - "Staff: {staff}"
+    - "Reason: {reason}"
+  Content-Report:
+    - "Reported: {reported}"
+    - "Player: {player}"
     - "Reason: {reason}"
   Footer: Versai Network
   Image: https://raw.githubusercontent.com/versai-network/icons/master/Versai_Rounded.png
@@ -106,6 +111,10 @@ Kick:
   Message:
     - "You were kicked!"
     - "For: {reason}"
+Report:
+  Reasons:
+    - Foo
+    - Bar
 List:
   Format:
     - "{player} by {staff}"

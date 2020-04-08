@@ -45,3 +45,6 @@ permissions:
       moderation.staff_chat:
         default: "op"
         description: "Allows to use the staff chat"
+      moderation.reports:
+        default: "op"
+        description: "Allows player to view reports"

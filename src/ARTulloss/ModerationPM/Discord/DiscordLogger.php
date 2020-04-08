@@ -69,11 +69,12 @@ class DiscordLogger
      * @param string $title
      * @param array $content
      * @param int $color
+     * @param string|null $customHook
      * @throws \Exception
      */
-    public function logGeneric(string $title, array $content, int $color): void{
+    public function logGeneric(string $title, array $content, int $color, string $customHook = null): void{
         $data = $this->webhookData;
-        $hook = new Webhook($data['Webhook']);
+        $hook = new Webhook($customHook ?? $data['Webhook']);
         $message = new Message();
         $embed = new Embed();
         $embed->setColor($color);
