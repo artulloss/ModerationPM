@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace ARTulloss\ModerationPM\Commands\Form\PunishmentsList;
 
+use function array_unique;
 use ARTulloss\ModerationPM\Commands\CommandConstants;
 use ARTulloss\ModerationPM\Commands\ModerationCommand;
 use ARTulloss\ModerationPM\Database\Container\Punishment;
@@ -50,15 +51,25 @@ class ListPunishmentsCommand extends ModerationCommand implements CommandConstan
                 $commandConfig = $this->plugin->getCommandConfig();
                 $this->asyncGetPunishments(function (?array $punishments) use ($sender, $commandConfig): void{
                     if($punishments !== null) {
-                        if(count($punishments) > self::MAX_FORM) {
+                        $punishmentNames = [];
+                        /** @var Punishment $punishment */
+                        foreach ($punishments as $punishment) {
+                            $punishmentNames[] = $punishment->getPlayerName();
+                        }
+                        if(count(array_unique($punishmentNames)) > self::MAX_FORM) {
                             $this->runAsConsole($sender);
                             return;
                         }
                         $format = $commandConfig->getNested('List.Format');
+                        $punishmentsAlreadyListed = [];
                         /** @var Punishment $punishment */
                         foreach ($punishments as $punishment) {
-                            $menuText = $this->replaceStrings(implode(TextFormat::EOL, $format), $this->provider->typeToString($this->type), $punishment->getPlayerName(), $punishment->getStaffName(), $punishment->getReason());
-                            $entries[] = new MenuOption($menuText);
+                            $name = $punishment->getPlayerName();
+                            if(!isset($punishmentsAlreadyListed[$name])) {
+                                $menuText = $this->replaceStrings(implode(TextFormat::EOL, $format), $this->provider->typeToString($this->type), $name, $punishment->getStaffName(), $punishment->getReason());
+                                $entries[] = new MenuOption($menuText);
+                                $punishmentsAlreadyListed[$name] = true;
+                            }
                         }
                         if($entries ?? null !== null) {
                             $name = $this->provider->typeToString($this->type);
@@ -81,12 +92,13 @@ class ListPunishmentsCommand extends ModerationCommand implements CommandConstan
     public function runAsConsole(CommandSender $sender): void{
         $this->asyncGetPunishments(function (?array $punishments) use ($sender): void{
             if($punishments !== null) {
-                $format = implode(' ', $this->plugin->getCommandConfig()->getNested('List.Format'));
-                $type = $this->provider->resolveType($this->type, 'ban', 'ban-ip', 'mute', 'freeze');
+                $punishmentsNames = [];
                 /** @var Punishment $punishment */
                 foreach ($punishments as $punishment) {
-                    $sender->sendMessage($this->replaceStrings($format, $type, $punishment->getPlayerName(), $punishment->getStaffName(), $punishment->getReason()));
+                    $punishmentsNames[] = $punishment->getPlayerName();
                 }
+                $punishmentString = implode(', ', array_unique($punishmentsNames));
+                $sender->sendMessage($punishmentString);
             } else
                 $sender->sendMessage(TextFormat::RED . 'No one is ' . $this->provider->resolveType($this->type, 'banned', 'IP banned', 'muted', 'frozen'));
         });
