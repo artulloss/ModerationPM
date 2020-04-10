@@ -58,6 +58,7 @@ abstract class FormNotStoredPunishmentModerationCommand extends FormModerationCo
         ], function (Player $sender, CustomFormResponse $response) use ($player): void{
             $response = $response->getAll();
             $response['reason'] = $response['custom_reason'] === '' ? $this->reasons[$response['reason']] : $response['custom_reason'];
+            $response['name'] = $player->getName();
             $this->callback($sender, $player, $response);
         });
         $sender->sendForm($form);
@@ -68,6 +69,7 @@ abstract class FormNotStoredPunishmentModerationCommand extends FormModerationCo
      * @param array $args
      */
     public function runAsConsole(CommandSender $sender, Player $player, array $args): void{
+        $args['name'] = $player->getName();
         if(isset($args['reason']) && $args['reason'])
             $this->callback($sender, $player, $args);
         else

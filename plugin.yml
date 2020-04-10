@@ -5,49 +5,45 @@ api: 3.0.0
 author: ARTulloss
 description: Moderation System
 permissions:
-  moderation:
-    default: "false"
-    description: "ModerationPM root permission"
-    children:
-      moderation.ban:
-        default: "op"
-        description: "Allows to ban players"
-      moderation.ip ban:
-        default: "op"
-        description: "Allows to ban players IP addresses"
-      moderation.mute:
-        default: "op"
-        description: "Allows to mute players"
-      moderation.freeze:
-        default: "op"
-        description: "Allows to freeze players"
-      moderation.kick:
-        default: "op"
-        description: "Allows to kick players"
-      moderation.report:
-        default: true
-        description: "Allows to report players"
-      moderation.unban:
-        default: "op"
-        description: "Allows to unban players"
-      moderation.unip ban:
-        default: "op"
-        description: "Allows to unban players IP addresses"
-      moderation.unmute:
-        default: "op"
-        description: "Allows to unmute players"
-      moderation.unfreeze:
-        default: "op"
-        description: "Allows to unfreeze players"
-      moderation.list:
-        default: "op"
-        description: "Allows to view all punishment types"
-      moderation.touch_punish:
-        default: "op"
-        description: "Allows to use touch punish for hackers with hard to see names"
-      moderation.staff_chat:
-        default: "op"
-        description: "Allows to use the staff chat"
-      moderation.reports:
-        default: "op"
-        description: "Allows player to view reports"
+  moderation.ban:
+    default: "op"
+    description: "Allows to ban players"
+  moderation.ip ban:
+    default: "op"
+    description: "Allows to ban players IP addresses"
+  moderation.mute:
+    default: "op"
+    description: "Allows to mute players"
+  moderation.freeze:
+    default: "op"
+    description: "Allows to freeze players"
+  moderation.kick:
+    default: "op"
+    description: "Allows to kick players"
+  moderation.report:
+    default: true
+    description: "Allows to report players"
+  moderation.unban:
+    default: "op"
+    description: "Allows to unban players"
+  moderation.unip ban:
+    default: "op"
+    description: "Allows to unban players IP addresses"
+  moderation.unmute:
+    default: "op"
+    description: "Allows to unmute players"
+  moderation.unfreeze:
+    default: "op"
+    description: "Allows to unfreeze players"
+  moderation.list:
+    default: "op"
+    description: "Allows to view all punishment lists"
+  moderation.touch_punish:
+    default: "op"
+    description: "Allows to use touch punish for hackers with hard to see names"
+  moderation.staff_chat:
+    default: "op"
+    description: "Allows to use the staff chat"
+  moderation.reports:
+    default: "op"
+    description: "Allows player to view reports"

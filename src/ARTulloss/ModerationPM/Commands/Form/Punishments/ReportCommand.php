@@ -23,7 +23,7 @@ class ReportCommand extends FormNotStoredPunishmentModerationCommand {
     public const COLOR = Colors::ORANGE;
     public const MESSAGE_SUCCESS = TextFormat::GREEN . 'Successfully reported {player}!';
     public const MESSAGE_BROADCAST = TextFormat::GREEN . '{player} was reported by {staff}';
-    public const REPORT_FORMAT = 'Report from {player} with reason: {reason}';
+    public const REPORT_FORMAT = 'Report on {reported} from {player} with reason: {reason}';
     /**
      * @param CommandSender $sender
      * @param Player $player
@@ -35,7 +35,7 @@ class ReportCommand extends FormNotStoredPunishmentModerationCommand {
         $this->logReport($sender, $player, $result['reason']);
         foreach ($sender->getServer()->getOnlinePlayers() as $player) {
             if($player->hasPermission(Main::PERMISSION_PREFIX . 'reports')) {
-                $player->sendMessage(str_replace(['{player}', '{reason}'], [$sender->getName(), $result['reason']], self::REPORT_FORMAT));
+                $player->sendMessage(str_replace(['{reported}', '{player}', '{reason}'], [$result['name'], $sender->getName(), $result['reason']], self::REPORT_FORMAT));
             }
         }
     }
