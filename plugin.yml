@@ -47,3 +47,6 @@ permissions:
   moderation.reports:
     default: "op"
     description: "Allows player to view reports"
+  moderation.onlinestaff:
+    default: "op"
+    description: "Allows the player to check online staff"
