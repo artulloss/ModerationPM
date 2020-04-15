@@ -33,7 +33,7 @@ class OnlineStaffCommand extends ModerationCommand{
                     $staff[] = $player->getName();
             $sender->sendMessage('There are ' . TextFormat::BLUE . count($staff) . TextFormat::WHITE . ' staff online!');
             if(count($staff) !== 0)
-                $sender->sendMessage('The staff are: ' . implode(' ,', $staff));
+                $sender->sendMessage('The staff are: ' . implode(', ', $staff));
         }
     }
 }
