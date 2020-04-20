@@ -20,7 +20,7 @@ Discord: # Logging for commands
     - "Reported: {reported}"
     - "Player: {player}"
     - "Reason: {reason}"
-  Footer: Versai Network
+  Footer: Your server
   Image: https://raw.githubusercontent.com/versai-network/icons/master/Versai_Rounded.png
 Ban:
   Lengths:
@@ -48,7 +48,7 @@ Ban:
     - "You are banned!"
     - "For: {reason}"
     - "Until: {until}"
-    - "Problem? bit.ly/VersaiAppeal"
+    - "Problem? Appeal on discord!"
 Ip Ban:
   Lengths:
     - 1 minute
@@ -75,7 +75,7 @@ Ip Ban:
     - "You are banned!"
     - "For: {reason}"
     - "Until: {until}"
-    - "Problem? bit.ly/VersaiAppeal"
+    - "Problem? Appeal on discord!"
 Mute:
   Lengths:
     - 1 hour
