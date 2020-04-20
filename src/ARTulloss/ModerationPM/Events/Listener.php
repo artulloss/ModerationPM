@@ -159,7 +159,7 @@ class Listener implements PMListener{
 
         $msg = $event->getMessage();
 
-        if($this->plugin->getCommandConfig()->getNested('Staff Chat.Enabled')) {
+        if($this->plugin->getConfig()->getNested('Staff Chat.Enabled')) {
             $toggledStaffChat = $this->plugin->getStaffChatToggled();
             $staffChat = $this->plugin->getStaffChat();
 
