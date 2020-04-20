@@ -7,7 +7,7 @@ https://poggit.pmmp.io/ci/artulloss/ModerationPM/ModerationPM/dev
 # Features
 
 ModerationPM includes 4 ways to punish players.
-The three ways are banning, ip banning, muting and freezing.
+The 4 ways are banning, ip banning, muting and freezing.
 
 Normal punishments include anti-alting methods.
 IP bans respect player privacy and IPs are salted and hashed before being stored in the database.
