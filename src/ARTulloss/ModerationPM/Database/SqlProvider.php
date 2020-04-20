@@ -47,11 +47,12 @@ abstract class SqlProvider extends Provider implements Queries{
     }
     public function asyncRegisterPlayer(string $name, string $xuid, string $deviceID, string $ip, callable $onComplete = null): void{
         Await::f2c(function () use ($name, $xuid, $deviceID, $ip): Generator{
+            $config = $this->plugin->getConfig();
             yield $this->asyncInsert(Queries::MODERATION_INSERT_PLAYERS, [
                 'player_name' => $name,
                 'xuid' => $xuid,
                 'device_id' => $deviceID,
-                'ip' => Utilities::hash($ip)
+                'ip' => Utilities::hash($ip, $config->getNested('Hash.Beginning'), $config->getNested('Hash.End'))
             ]);
         }, $onComplete, $this->getOnError());
     }

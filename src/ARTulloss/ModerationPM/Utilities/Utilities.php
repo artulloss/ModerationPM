@@ -75,20 +75,13 @@ class Utilities{
     }
     /**
      * @param string $string
+     * @param string $front
+     * @param string $back
      * @return string
      */
-    public static function hash(string $string): string{
-        $front = '1O"iQWl<';
-        $back = '^83M3an6';
+    public static function hash(string $string, string $front, string $back): string{
+    //    $front = '1O"iQWl<';
+    //    $back = '^83M3an6';
         return hash('sha256', $front . $string . $back);
-    }
-
-    /**
-     * Debug function
-     * @param $dump
-     * @return mixed
-     */
-    public static function dumpReturn($dump) {
-        return $dump;
     }
 }

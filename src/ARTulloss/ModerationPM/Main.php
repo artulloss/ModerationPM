@@ -14,11 +14,11 @@ use ARTulloss\ModerationPM\Commands\Form\PunishmentsList\ListPunishmentsCommand;
 use ARTulloss\ModerationPM\Commands\Miscellaneous\AliasCommand;
 use ARTulloss\ModerationPM\Commands\Miscellaneous\OnlineStaffCommand;
 use ARTulloss\ModerationPM\Commands\Miscellaneous\StaffChatCommand;
+use ARTulloss\ModerationPM\Commands\Miscellaneous\TouchPunish;
 use ARTulloss\ModerationPM\Commands\ReversePunishments\UnbanCommand;
 use ARTulloss\ModerationPM\Commands\ReversePunishments\UnfreezeCommand;
 use ARTulloss\ModerationPM\Commands\ReversePunishments\UnBanIPCommand;
 use ARTulloss\ModerationPM\Commands\ReversePunishments\UnmuteCommand;
-use ARTulloss\ModerationPM\Commands\TouchPunish\TouchPunish;
 use ARTulloss\ModerationPM\Database\Container\BoolContainer;
 use ARTulloss\ModerationPM\Database\Container\Cache;
 use ARTulloss\ModerationPM\Database\Container\PlayerDataContainer;
@@ -29,8 +29,11 @@ use ARTulloss\ModerationPM\Database\Container\IntContainer;
 use ARTulloss\ModerationPM\Discord\DiscordLogger;
 use ARTulloss\ModerationPM\Events\Listener;
 use ARTulloss\ModerationPM\StaffChat\StaffChat;
+use function base64_encode;
 use CortexPE\Commando\BaseCommand;
 use CortexPE\Commando\PacketHooker;
+use const PHP_INT_MAX;
+use const PHP_INT_MIN;
 use pocketmine\plugin\PluginBase;
 use pocketmine\utils\Config;
 use pocketmine\utils\TextFormat;
@@ -39,6 +42,7 @@ use poggit\libasynql\DataConnector;
 use poggit\libasynql\libasynql;
 use DateTime;
 use Exception;
+use function rand;
 use function strtr;
 use function implode;
 use function count;
@@ -82,6 +86,15 @@ class Main extends PluginBase{
             if($this->getCommandConfig()->getNested('Discord.Enable'))
                 $this->discordLogger = new DiscordLogger($this);
             $this->tapPunish = new IntContainer();
+            // Create hash
+            $hash = base64_encode((string)rand(PHP_INT_MIN, PHP_INT_MAX));
+            $half = strlen($hash) / 2;
+            $config = $this->getConfig();
+            if($config->getNested('Hash.Beginning') === '')
+                $config->setNested('Hash.Beginning', substr($hash, 0, $half));
+            if($config->getNested('Hash.End') === '')
+                $config->setNested('Hash.End', substr($hash, $half));
+            $config->save();
         }
 	}
 	public function onDisable(): void{
@@ -90,6 +103,7 @@ class Main extends PluginBase{
     }
     public function initConfigs(): void{
 	    $this->saveResource('commands.yml');
+	    $this->saveResource('database.yml');
     }
     /**
      * @throws \CortexPE\Commando\exception\HookAlreadyRegistered
@@ -138,8 +152,7 @@ class Main extends PluginBase{
             $this->getLogger()->error('Something went wrong in registering the command config...');
     }
     public function registerDatabase(): void{
-	    $config = $this->getConfig();
-
+	    $config = new Config($this->getDataFolder() . 'database.yml');
         $this->database = libasynql::create($this, $config->get('database'), [
             'mysql' => 'mysql.sql'
         ]);
@@ -159,8 +172,8 @@ class Main extends PluginBase{
         $this->getScheduler()->scheduleDelayedRepeatingTask($task, 1200 * $minutes, 1200 * $minutes);
     }
     public function registerStaffChat(): void{
-	    if($this->commandConfig->getNested('Staff Chat.Enabled')) {
-            $this->staffChat = new StaffChat($this->commandConfig->getNested('Staff Chat.Format'));
+	    if($this->getConfig()->getNested('Staff Chat.Enabled')) {
+            $this->staffChat = new StaffChat($this->getConfig()->getNested('Staff Chat.Format'));
             $this->staffChatToggled = new BoolContainer($this);
             $this->getServer()->getCommandMap()->register($this->getName(), new StaffChatCommand($this, 'staffchat', 'Staff only chat!', ['sc']));
 	    }

@@ -7,7 +7,7 @@
  */
 declare(strict_types=1);
 
-namespace ARTulloss\ModerationPM\Commands\TouchPunish;
+namespace ARTulloss\ModerationPM\Commands\Miscellaneous;
 
 use ARTulloss\ModerationPM\Commands\CommandConstants;
 use ARTulloss\ModerationPM\Commands\ModerationCommand;
