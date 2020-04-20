@@ -80,8 +80,6 @@ class Utilities{
      * @return string
      */
     public static function hash(string $string, string $front, string $back): string{
-    //    $front = '1O"iQWl<';
-    //    $back = '^83M3an6';
         return hash('sha256', $front . $string . $back);
     }
 }
