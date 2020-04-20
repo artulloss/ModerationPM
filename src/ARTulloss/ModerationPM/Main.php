@@ -59,6 +59,8 @@ class Main extends PluginBase{
     private $playerData;
     /** @var Config $commandConfig */
     private $commandConfig;
+    /** @var Config $databaseConfig */
+    private $databaseConfig;
     /** @var DiscordLogger $discordLogger */
     private $discordLogger;
     /** @var Cache $muted */
@@ -152,8 +154,8 @@ class Main extends PluginBase{
             $this->getLogger()->error('Something went wrong in registering the command config...');
     }
     public function registerDatabase(): void{
-	    $config = new Config($this->getDataFolder() . 'database.yml');
-        $this->database = libasynql::create($this, $config->get('database'), [
+	    $this->databaseConfig = new Config($this->getDataFolder() . 'database.yml');
+        $this->database = libasynql::create($this, $this->databaseConfig->get('database'), [
             'mysql' => 'mysql.sql'
         ]);
         $this->provider = new MySqlProvider($this);
@@ -168,7 +170,7 @@ class Main extends PluginBase{
                 $this->frozen->refresh();
             }
         });
-        $minutes = $this->getConfig()->getNested('database.cache');
+        $minutes = $this->databaseConfig->getNested('database.cache');
         $this->getScheduler()->scheduleDelayedRepeatingTask($task, 1200 * $minutes, 1200 * $minutes);
     }
     public function registerStaffChat(): void{
