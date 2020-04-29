@@ -18,7 +18,6 @@ use pocketmine\command\utils\InvalidCommandSyntaxException;
 use pocketmine\Player;
 use function str_replace;
 use function strtolower;
-use function var_dump;
 
 abstract class ReversePunishmentCommand extends ModerationCommand{
     protected const TYPE = 0;
@@ -72,7 +71,6 @@ abstract class ReversePunishmentCommand extends ModerationCommand{
                                     }
                                     $sender->sendMessage(str_replace('{player}', $name, static::MESSAGE_SUCCESS));
                                 });
-                                var_dump($this->names);
                                 if($playerData === $lastPlayerData && $data === $lastData) {
                                     foreach ($this->names as $name => $true) {
                                         $sender->getServer()->broadcastMessage(str_replace(['{player}', '{staff}'], [$name, $sender->getName()], static::MESSAGE_BROADCAST));
