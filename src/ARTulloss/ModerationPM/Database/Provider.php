@@ -67,6 +67,15 @@ abstract class Provider{
      */
     abstract public function asyncGetPlayer(string $name, ?string $xuid, ?string $device_id, bool $inclusive, callable $callback): void;
     /**
+     * @param string $name
+     * @param string|null $xuid
+     * @param string|null $device_id
+     * @param string|null $ip
+     * @param bool $inclusive
+     * @param callable $callback
+     */
+    abstract public function asyncGetPlayerIP(string $name, ?string $xuid, ?string $device_id, ?string $ip, bool $inclusive, callable $callback): void;
+    /**
      * @param int $id
      * @param int $type
      * @param string $staffName

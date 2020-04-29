@@ -65,10 +65,9 @@ class Utilities{
     /**
      * @param int $until
      * @return bool
-     * @throws \Exception
      */
     public static function isStillPunished(int $until): bool{
-        $remaining = $until - (new DateTime())->getTimestamp();
+        $remaining = $until - time();
         if($until === Punishment::FOREVER || $remaining > 0)
             return true;
         return false;

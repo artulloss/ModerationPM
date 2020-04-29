@@ -27,11 +27,16 @@ class AliasCommand extends ModerationCommand {
             throw new InvalidCommandSyntaxException();
         $player = Utilities::getPlayer($args['name']);
         $xuid = null;
+        $ip = null;
+        $deviceID = null;
         if($player !== null) {
             $args['name'] = $player->getName();
             $xuid = $player->getXuid();
+            $deviceID = $this->plugin->getListener()->getDeviceIDs()[$args['name']];
+            $config = $this->plugin->getConfig();
+            $ip = Utilities::hash($player->getAddress(), $config->getNested('Hash.Beginning'), $config->getNested('Hash.End'));
         }
-        $this->passPlayerData($args['name'], $xuid, null, true, function (?array $playerDataArray) use ($sender, $args): void{
+        $this->passPlayerDataIP($args['name'], $xuid, $deviceID, $ip, true, function (?array $playerDataArray) use ($sender, $args): void{
             if($playerDataArray !== null) {
                 $lastValue = end($playerDataArray);
                 /** @var PlayerData $playerData */
@@ -39,7 +44,7 @@ class AliasCommand extends ModerationCommand {
                     $final = false;
                     if($playerData === $lastValue)
                         $final = true;
-                    $this->passPlayerData($playerData->getName(), $playerData->getXUID(), $playerData->getDeviceID(), true, function (?array $playerDataArray) use ($sender, $args, $final): void{
+                    $this->passPlayerDataIP($playerData->getName(), $playerData->getXUID(), $playerData->getDeviceID(), $playerData->getHashedIP(), true, function (?array $playerDataArray) use ($sender, $args, $final): void{
                         if($playerDataArray !== null) {
                             /** @var PlayerData $playerData */
                             foreach ($playerDataArray as $playerData) {
@@ -61,6 +66,24 @@ class AliasCommand extends ModerationCommand {
                     });
                 }
             }
+        });
+    }
+    /**
+     * @param string $playerName
+     * @param string|null $xuid
+     * @param string|null $device_id
+     * @param string|null $ip
+     * @param bool $inclusive
+     * @param callable $callback
+     */
+    public function passPlayerDataIP(string $playerName, ?string $xuid, ?string $device_id, ?string $ip, bool $inclusive, callable $callback): void{
+        $this->provider->asyncGetPlayerIP($playerName, $xuid, $device_id, $ip, $inclusive, function (array $result) use ($callback): void {
+            foreach ($result as $player) {
+                $data = PlayerData::fromDatabaseQuery($player, PlayerData::NO_KEY);
+                if($data !== null)
+                    $dataArray[] = $data;
+            }
+            $callback($dataArray ?? null);
         });
     }
 }

@@ -67,6 +67,18 @@ abstract class SqlProvider extends Provider implements Queries{
             $callback($select);
         }, null, $this->getOnError());
     }
+    public function asyncGetPlayerIP(string $name, ?string $xuid, ?string $device_id, ?string $ip, bool $inclusive, callable $callback): void{
+        Utils::validateCallableSignature(function (array $result): void{}, $callback);
+        Await::f2c(function () use ($callback, $name, $xuid, $device_id, $ip, $inclusive): Generator{
+            $select = yield $this->asyncSelect($inclusive ? Queries::MODERATION_GET_PLAYERS_PLAYER_INCLUSIVE_IP : Queries::MODERATION_GET_PLAYERS_PLAYER_EXCLUSIVE_IP, [
+                'player_name' => $name,
+                'xuid' => $xuid,
+                'device_id' => $device_id,
+                'ip' => $ip
+            ]);
+            $callback($select);
+        }, null, $this->getOnError());
+    }
     public function asyncPunishPlayer(int $id, int $type, string $staffName, string $reason, int $until, callable $onComplete = null): void{
         Await::f2c(function () use ($id, $type, $staffName, $reason, $until): Generator{
             $query = $this->resolveType($type, Queries::MODERATION_UPSERT_BANS, Queries::MODERATION_UPSERT_IP_BANS, Queries::MODERATION_UPSERT_MUTES, Queries::MODERATION_UPSERT_FREEZES);

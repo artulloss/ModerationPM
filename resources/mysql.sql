@@ -111,6 +111,20 @@ SELECT * FROM players WHERE LOWER(name) = LOWER(:player_name) AND xuid = :xuid A
 -- #         :device_id string ~
 SELECT * FROM players WHERE LOWER(name) = LOWER(:player_name) OR xuid = :xuid OR device_id = :device_id;
 -- #       }
+-- #       { player_exclusive_ip
+-- #         :player_name string
+-- #         :xuid string ~
+-- #         :device_id string ~
+-- #         :ip string ~
+SELECT * FROM players WHERE LOWER(name) = LOWER(:player_name) AND xuid = :xuid AND device_id = :device_id and ip = :ip;
+-- #       }
+-- #       { player_inclusive_ip
+-- #         :player_name string
+-- #         :xuid string ~
+-- #         :device_id string ~
+-- #         :ip string ~
+SELECT * FROM players WHERE LOWER(name) = LOWER(:player_name) OR xuid = :xuid OR device_id = :device_id OR ip = :ip;
+-- #       }
 -- #     }
 -- #     { bans
 -- #       { all

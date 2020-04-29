@@ -73,6 +73,8 @@ class Main extends PluginBase{
     private $staffChat;
     /** @var BoolContainer $staffChatToggled */
     private $staffChatToggled;
+    /** @var Listener $listener */
+    private $listener;
     /**
      * @throws \CortexPE\Commando\exception\HookAlreadyRegistered
      */
@@ -84,7 +86,8 @@ class Main extends PluginBase{
             $this->registerCommands();
             $this->registerCache();
             $this->registerStaffChat();
-            $this->getServer()->getPluginManager()->registerEvents(new Listener($this), $this);
+            $this->listener = new Listener($this);
+            $this->getServer()->getPluginManager()->registerEvents($this->listener, $this);
             if($this->getCommandConfig()->getNested('Discord.Enable'))
                 $this->discordLogger = new DiscordLogger($this);
             $this->tapPunish = new IntContainer();
@@ -259,5 +262,11 @@ class Main extends PluginBase{
      */
     public function getStaffChatToggled(): BoolContainer{
         return $this->staffChatToggled;
+    }
+    /**
+     * @return Listener
+     */
+    public function getListener(): Listener{
+        return $this->listener;
     }
 }

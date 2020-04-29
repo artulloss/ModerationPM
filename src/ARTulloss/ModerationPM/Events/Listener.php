@@ -30,6 +30,8 @@ class Listener implements PMListener{
     private $plugin;
     /** @var string $staffChatChar */
     private $staffChatChar;
+    /** @var string[] $deviceIDs */
+    private $deviceIDs;
     /**
      * Listener constructor.
      * @param Main $plugin
@@ -50,6 +52,7 @@ class Listener implements PMListener{
             if($xuid === '')
                 return;
             $deviceID = $pk->clientData['DeviceId'];
+            $this->deviceIDs[$name] = $deviceID;
             $provider = $this->plugin->getProvider();
             $provider->asyncGetPlayer($name, $xuid, $deviceID, false, function (array $result) use ($provider, $player, $name, $xuid, $deviceID, $event): void{
                 $playerData = PlayerData::fromDatabaseQuery($result);
@@ -144,7 +147,9 @@ class Listener implements PMListener{
      * @param PlayerQuitEvent $event
      */
     public function onQuit(PlayerQuitEvent $event): void{
-        $this->plugin->getPlayerData()->unset($event->getPlayer()->getName());
+        $name = $event->getPlayer()->getName();
+        $this->plugin->getPlayerData()->unset($name);
+        unset($this->deviceIDs[$name]);
     }
     /**
      * @param PlayerChatEvent $event
@@ -225,5 +230,11 @@ class Listener implements PMListener{
                 $this->plugin->getLogger()->info("$name's " . $expiredMsg);
             }
         };
+    }
+    /**
+     * @return array
+     */
+    public function getDeviceIDs(): array{
+        return $this->deviceIDs;
     }
 }
