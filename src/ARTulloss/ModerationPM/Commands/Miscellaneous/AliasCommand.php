@@ -11,6 +11,7 @@ namespace ARTulloss\ModerationPM\Commands\Miscellaneous;
 
 use ARTulloss\ModerationPM\Commands\ModerationCommand;
 use ARTulloss\ModerationPM\Database\Container\PlayerData;
+use ARTulloss\ModerationPM\Main;
 use ARTulloss\ModerationPM\Utilities\Utilities;
 use pocketmine\command\CommandSender;
 use pocketmine\command\utils\InvalidCommandSyntaxException;
@@ -22,7 +23,15 @@ class AliasCommand extends ModerationCommand {
     public const MESSAGE_INITIAL = 'Alias for {player}';
     public const MESSAGE_MATCHES = '{player} with ' . TextFormat::RED . '{matches}' . TextFormat::WHITE  . ' matches';
     private $aliases = [];
+
+    public function __construct(Main $main, string $name, string $description = "", array $aliases = []) {
+        parent::__construct($main, $name, $description, $aliases);
+        $this->setPermission(Main::PERMISSION_PREFIX . 'alias');
+    }
+
     public function onRun(CommandSender $sender, string $aliasUsed, array $args): void{
+        if(!$this->testPermission($sender))
+            return;
         if(!isset($args['name']))
             throw new InvalidCommandSyntaxException();
         $player = Utilities::getPlayer($args['name']);

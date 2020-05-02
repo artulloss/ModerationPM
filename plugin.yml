@@ -50,3 +50,6 @@ permissions:
   moderation.onlinestaff:
     default: "op"
     description: "Allows the player to check online staff"
+  moderation.alias:
+    default: "op"
+    description: "Allows the player to check for alts"

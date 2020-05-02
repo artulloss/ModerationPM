@@ -12,6 +12,7 @@ namespace ARTulloss\ModerationPM\Commands\Miscellaneous;
 use ARTulloss\ModerationPM\Commands\Arguments\MessageArgument;
 use ARTulloss\ModerationPM\Commands\CommandConstants;
 use ARTulloss\ModerationPM\Commands\ModerationCommand;
+use ARTulloss\ModerationPM\Main;
 use pocketmine\command\CommandSender;
 use pocketmine\Player;
 use pocketmine\utils\TextFormat;
@@ -20,7 +21,7 @@ class StaffChatCommand extends ModerationCommand {
 
     protected function prepare(): void{
         $this->registerArgument(0, new MessageArgument('message', true));
-        $this->setPermission('moderation.staff_chat');
+        $this->setPermission(Main::PERMISSION_PREFIX . 'staff_chat');
     }
     public function onRun(CommandSender $sender, string $aliasUsed, array $args): void{
         if($sender instanceof Player) {
