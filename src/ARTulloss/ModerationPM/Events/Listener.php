@@ -13,6 +13,7 @@ use ARTulloss\ModerationPM\Database\Container\PlayerData;
 use ARTulloss\ModerationPM\Database\Container\Punishment;
 use ARTulloss\ModerationPM\Main;
 use ARTulloss\ModerationPM\Utilities\Utilities;
+use Exception;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\Listener as PMListener;
@@ -24,6 +25,7 @@ use pocketmine\network\mcpe\protocol\LoginPacket;
 use pocketmine\Player;
 use function strtr;
 use function substr;
+use function var_dump;
 
 class Listener implements PMListener{
     /** @var Main $plugin */
@@ -32,12 +34,15 @@ class Listener implements PMListener{
     private $staffChatChar;
     /** @var string[] $deviceIDs */
     private $deviceIDs;
+    /** @var bool $waterDog */
+    private $waterDog;
     /**
      * Listener constructor.
      * @param Main $plugin
      */
     public function __construct(Main $plugin) {
         $this->plugin = $plugin;
+        $this->waterDog = $plugin->getConfig()->get('Waterdog');
         $this->staffChatChar = $plugin->getCommandConfig()->getNested('Staff Chat.Inverse Character');
     }
     /**
@@ -46,6 +51,7 @@ class Listener implements PMListener{
     public function onLogin(DataPacketReceiveEvent $event): void{
         $pk = $event->getPacket();
         if($pk instanceof LoginPacket) {
+            var_dump($pk);
             $player = $event->getPlayer();
             $name = $pk->username;
             $xuid = $pk->xuid;
@@ -54,10 +60,16 @@ class Listener implements PMListener{
             $deviceID = $pk->clientData['DeviceId'];
             $this->deviceIDs[$name] = $deviceID;
             $provider = $this->plugin->getProvider();
-            $provider->asyncGetPlayer($name, $xuid, $deviceID, false, function (array $result) use ($provider, $player, $name, $xuid, $deviceID, $event): void{
+            $clientData = $pk->clientData;
+            $provider->asyncGetPlayer($name, $xuid, $deviceID, false, function (array $result) use ($provider, $player, $clientData, $name, $xuid, $deviceID, $event): void{
                 $playerData = PlayerData::fromDatabaseQuery($result);
                 if ($playerData === null) {
-                    $provider->asyncRegisterPlayer($name, $xuid, $deviceID, $player->getAddress(), function () use ($event): void {
+                    $waterDogIp = $clientData['Waterdog_IP'] ?? null;
+                    if($this->waterDog && $waterDogIp === null) {
+                        $this->plugin->getLogger()->error("Waterdog IP not found when registering player with name {$player->getName()}.");
+                        return;
+                    }
+                    $provider->asyncRegisterPlayer($name, $xuid, $deviceID, $this->waterDog ? $waterDogIp : $player->getAddress(), function () use ($event): void {
                         $this->onLogin($event);
                     });
                     return;

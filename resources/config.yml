@@ -5,3 +5,4 @@ Staff Chat:
 Hash: # Only change this if you reset your database. This will affect new IP addresses that are stored
   Beginning: ""
   End: ""
+Waterdog: false

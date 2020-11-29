@@ -91,15 +91,7 @@ class Main extends PluginBase{
             if($this->getCommandConfig()->getNested('Discord.Enable'))
                 $this->discordLogger = new DiscordLogger($this);
             $this->tapPunish = new IntContainer();
-            // Create hash
-            $hash = base64_encode((string)rand(PHP_INT_MIN, PHP_INT_MAX));
-            $half = strlen($hash) / 2;
-            $config = $this->getConfig();
-            if($config->getNested('Hash.Beginning') === '')
-                $config->setNested('Hash.Beginning', substr($hash, 0, $half));
-            if($config->getNested('Hash.End') === '')
-                $config->setNested('Hash.End', substr($hash, $half));
-            $config->save();
+            $this->createHash();
         }
 	}
 	public function onDisable(): void{
@@ -110,6 +102,18 @@ class Main extends PluginBase{
 	    $this->saveResource('commands.yml');
 	    $this->saveResource('database.yml');
     }
+
+    public function createHash() {
+        $hash = base64_encode((string)rand(PHP_INT_MIN, PHP_INT_MAX));
+        $half = strlen($hash) / 2;
+        $config = $this->getConfig();
+        if($config->getNested('Hash.Beginning') === '')
+            $config->setNested('Hash.Beginning', substr($hash, 0, $half));
+        if($config->getNested('Hash.End') === '')
+            $config->setNested('Hash.End', substr($hash, $half));
+        $config->save();
+    }
+
     /**
      * @throws \CortexPE\Commando\exception\HookAlreadyRegistered
      */
